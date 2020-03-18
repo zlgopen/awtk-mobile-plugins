@@ -1,0 +1,109 @@
+package org.zlgopen.plugins;
+
+import java.util.Set;
+import java.util.Map;
+import android.util.Log;
+import java.util.HashMap;
+import java.util.Iterator;
+import android.app.Activity;
+
+public class PluginManager {
+  static Activity activity;
+  static boolean quited = false;
+  static HashMap<String, Plugin> plugins = new HashMap<>();
+
+  public static void runInUIThread(final String callerInfo, final String target, 
+      final String action, final String args) {
+    PluginManager.activity.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        final String result = PluginManager.run(target, action, args);
+        PluginManager.writeResult(callerInfo, result);
+        Log.v("AWTK", "runInUIThread: callerInfo=" + callerInfo);
+        Log.v("AWTK", "runInUIThread: args=" + args);
+      }
+    });
+  }
+
+  public static void startThread() {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        while(!(PluginManager.quited)) {
+          String request = PluginManager.readRequest();
+
+          if(request == null) {
+            continue;
+          }
+
+          String items[] =  request.split(":", 5);
+
+          if(items.length == 5) {
+            final String onResult = items[0];
+            final String onResultCtx = items[1];
+            final String target = items[2];
+            final String action = items[3];
+            final String args = items[4];
+            final String callerInfo = onResult + ":" + onResultCtx + ":" + target + ":" + action;
+            PluginManager.runInUIThread(callerInfo, target, action, args);
+          } else {
+            Log.v("AWTK", "invalid request:" + request);
+          }
+        }
+        Log.v("AWTK", "plugin thread quited");
+      }
+    }).start();
+  }
+
+  public static void start(Activity activity) {
+    PluginManager.quited = false;
+    PluginManager.activity = activity;
+
+    PluginManager.init();
+    PluginManager.registerAll();
+    PluginManager.startThread();
+    Log.v("AWTK", "PluginManager start");
+  }
+  
+  public static void stop() {
+    Set set = PluginManager.plugins.entrySet();
+    Iterator iterator = set.iterator();
+
+    PluginManager.quited = true;
+    while(iterator.hasNext()) {
+       Map.Entry iter = (Map.Entry)iterator.next();
+       Plugin plugin = (Plugin)(iter.getValue());
+       plugin.deinit();
+    }
+
+    PluginManager.deinit();
+    Log.v("AWTK", "PluginManager stop");
+  }
+  
+  public static String run(String name, String action, String args) {
+    Plugin plugin = PluginManager.plugins.get(name);
+
+    if(plugin != null) {
+      return plugin.run(action, args);
+    }
+
+    return null;
+  }
+  
+  public static void register(String name, Plugin plugin) {
+    PluginManager.plugins.put(name, plugin);
+  }
+  
+  public static void unregister(String name) {
+    PluginManager.plugins.remove(name);
+  }
+  
+  public static void registerAll() {
+    PluginManager.register("share", new Share(PluginManager.activity));
+  }
+
+  public static native void init();
+  public static native void deinit();
+  public static native String readRequest();
+  public static native void writeResult(String callerInfo, String result);
+}
