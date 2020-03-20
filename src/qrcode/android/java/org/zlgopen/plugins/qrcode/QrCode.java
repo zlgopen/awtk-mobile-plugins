@@ -19,6 +19,7 @@ import android.content.Intent;
 
 public class QrCode implements Plugin {
   private int id;
+  private String callerInfo;
   private Activity activity;
   public static final String KEY_TITLE = "key_title";
   public static final String KEY_IS_QR_CODE = "key_code";
@@ -36,17 +37,28 @@ public class QrCode implements Plugin {
 
   @Override
   public boolean matchRequest(int requestCode) {
-    return false;
+    int id = requestCode >> 16;
+    Log.v("AWTK", id + "(id)vs " + this.id);
+    
+    return this.id == id;
   }
   
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    int code = requestCode & 0xffff;
+    Log.v("AWTK", code + "(code)vs: " + REQUEST_CODE_SCAN);
+    if(code == REQUEST_CODE_SCAN) {
+      String result = data.getStringExtra(Intents.Scan.RESULT);
+      PluginManager.writeResult(this.callerInfo, result);
+    }
+    
     return;
   }
 
   @Override
-  public String run(String action, String args) {
+  public boolean run(String action, String callerInfo, String args) {
     try {
+      this.callerInfo = callerInfo;
       JSONObject json = new JSONObject(args);
       String title = json.getString("title");
       
@@ -57,7 +69,8 @@ public class QrCode implements Plugin {
     } catch(JSONException e) {
       Log.v("AWTK", e.toString());
     }
-    return action;
+
+    return true;
   }
 
   QrCode(Activity activity, int id) {

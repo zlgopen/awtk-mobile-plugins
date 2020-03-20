@@ -33,7 +33,7 @@ ret_t qrcode_scan(const char* title, platform_request_on_result_t on_result, voi
   str_append_json_str_pair(&str, "title", title);
   str_append_char(&str, '}');
 
-  ret = platform_request_send("qrcode", "scan", str.str, on_result, NULL);
+  ret = platform_request_send("qrcode", "scan", str.str, on_result, on_result_ctx);
 
   str_reset(&str);
 

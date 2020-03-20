@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import android.app.Activity;
 import android.content.Intent;
+
 EXTRA_IMPORTS
 
 public class PluginManager {
@@ -19,8 +20,7 @@ public class PluginManager {
     PluginManager.activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        final String result = PluginManager.run(target, action, args);
-        PluginManager.writeResult(callerInfo, result);
+        PluginManager.run(target, callerInfo, action, args);
         Log.v("AWTK", "runInUIThread: callerInfo=" + callerInfo);
         Log.v("AWTK", "runInUIThread: args=" + args);
       }
@@ -98,14 +98,14 @@ public class PluginManager {
     return;
   }
   
-  public static String run(String name, String action, String args) {
+  public static boolean run(String name, String callerInfo, String action, String args) {
     Plugin plugin = PluginManager.plugins.get(name);
 
     if(plugin != null) {
-      return plugin.run(action, args);
+      return plugin.run(action, callerInfo, args);
     }
 
-    return null;
+    return false;
   }
   
   public static void register(String name, Plugin plugin) {

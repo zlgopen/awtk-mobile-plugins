@@ -29,7 +29,7 @@ public class Share implements Plugin {
   }
 
   @Override
-  public String run(String action, String args) {
+  public boolean run(String action, String callerInfo, String args) {
     try {
       JSONObject json = new JSONObject(args);
       String text = json.getString("text");
@@ -39,7 +39,10 @@ public class Share implements Plugin {
     } catch(JSONException e) {
       Log.v("AWTK", e.toString());
     }
-    return action;
+
+    PluginManager.writeResult(callerInfo, "share done");
+
+    return true;
   }
 
   Share(Activity activity, int id) {
