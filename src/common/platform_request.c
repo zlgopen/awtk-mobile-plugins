@@ -80,7 +80,6 @@ ret_t platform_request_send(const char* target, const char* action, const char* 
   str_t* s = &str;
   uint32_t size = 0;
   platform_request_result_t* result = NULL;
-  return_value_if_fail(s_client_fd > 0, RET_BAD_PARAMS);
   return_value_if_fail(on_result != NULL, RET_BAD_PARAMS);
   return_value_if_fail(target != NULL && action != NULL && args != NULL, RET_BAD_PARAMS);
 
@@ -100,9 +99,18 @@ ret_t platform_request_send(const char* target, const char* action, const char* 
   str_append_char(s, ':');
   str_append(s, args);
 
+#ifndef WITHOUT_PLUGINS
+  return_value_if_fail(s_client_fd > 0, RET_BAD_PARAMS);
+
   ret = send(s_client_fd, s, sizeof(str), 0);
   assert(ret == sizeof(str));
   log_debug("send: %s\n", s->str);
+#else 
+  (void)ret;
+  log_debug("plugins not supported: %s\n", s->str);
+#endif/*WITHOUT_PLUGINS*/
+
+  str_reset(&str);
 
   return RET_OK;
 }

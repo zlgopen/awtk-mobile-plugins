@@ -1,0 +1,15 @@
+{
+  "name":"qrcode_demo",
+  "version":"1.0",
+  "assets" : "assets",
+  "includes" : [".", "src"],
+  "android" : {
+    "plugins":["qrcode"],
+    "app_name":"org.zlgopen.qrcodedemo",
+    "sources":["demos/qrcode.c",  "demos/assets*.c", "demos/assets*.inc"]
+  },
+  "ios" : {
+    "app_name":"org.zlgopen.qrcodedemo",
+    "sources":["demos/qrcode.c","demos/assets*.c", "demos/assets*.inc"]
+  }
+}
