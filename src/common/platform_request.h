@@ -59,7 +59,7 @@ ret_t platform_request_init(void);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t platform_request_send(const char* target, const char* action, const char* args,
-    platform_request_on_result_t on_result, void* on_result_ctx);
+                            platform_request_on_result_t on_result, void* on_result_ctx);
 
 /**
  * @method platform_request_recv
