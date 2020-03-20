@@ -6,6 +6,8 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Iterator;
 import android.app.Activity;
+import android.content.Intent;
+EXTRA_IMPORTS
 
 public class PluginManager {
   static Activity activity;
@@ -80,6 +82,22 @@ public class PluginManager {
     Log.v("AWTK", "PluginManager stop");
   }
   
+  public static void onActivityResult(int requestCode, int resultCode, Intent data) {
+    Set set = PluginManager.plugins.entrySet();
+    Iterator iterator = set.iterator();
+
+    PluginManager.quited = true;
+    while(iterator.hasNext()) {
+       Map.Entry iter = (Map.Entry)iterator.next();
+       Plugin plugin = (Plugin)(iter.getValue());
+       if(plugin.matchRequest(requestCode)) {
+         plugin.onActivityResult(requestCode, resultCode, data);
+       }
+    }
+
+    return;
+  }
+  
   public static String run(String name, String action, String args) {
     Plugin plugin = PluginManager.plugins.get(name);
 
@@ -99,7 +117,8 @@ public class PluginManager {
   }
   
   public static void registerAll() {
-    PluginManager.register("share", new Share(PluginManager.activity));
+    int id = 100;
+    EXTRA_REGISTERS
   }
 
   public static native void init();

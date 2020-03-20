@@ -1,10 +1,10 @@
 {
-  "name":"share",
+  "name":"QrCode",
   "version":1.0,
   "author":"awtk team",
   "android" : {
-    "permissions" : ["CAMERA"],
-    "activities" : [" <activity android:name=\"com.king.zxing.CaptureActivity\" android:screenOrientation=\"portrait\" android:theme=\"@style/CaptureTheme\"/>"],
+    "permissions" : ["<uses-permission android:name=\"android.permission.CAMERA\" />"],
+    "activities" : ["<activity android:name=\"com.king.zxing.CaptureActivity\" android:screenOrientation=\"portrait\" android:theme=\"@style/CaptureTheme\"/>"],
     "dependencies":["implementation 'com.king.zxing:zxing-lite:1.1.6-androidx'",
       "api 'androidx.appcompat:appcompat:1.1.0'",
       "api 'com.google.zxing:core:3.3.3'"]
