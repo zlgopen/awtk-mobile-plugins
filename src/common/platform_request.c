@@ -105,12 +105,15 @@ ret_t platform_request_send(const char* target, const char* action, const char* 
   ret = send(s_client_fd, s, sizeof(str), 0);
   assert(ret == sizeof(str));
   log_debug("send: %s\n", s->str);
+/**
+ * XXX: call str_reset by receiver thread
+ * str_reset(&str);
+ */
 #else 
   (void)ret;
   log_debug("plugins not supported: %s\n", s->str);
-#endif/*WITHOUT_PLUGINS*/
-
   str_reset(&str);
+#endif/*WITHOUT_PLUGINS*/
 
   return RET_OK;
 }
