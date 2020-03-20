@@ -11,10 +11,21 @@ import org.json.JSONException;
 import android.util.Log;
 
 public class Share implements Plugin {
+  private int id;
   private Activity activity;
 
   @Override
   public void deinit() {
+  }
+
+  @Override
+  public boolean matchRequest(int requestCode) {
+    return false;
+  }
+  
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    return;
   }
 
   @Override
@@ -31,7 +42,8 @@ public class Share implements Plugin {
     return action;
   }
 
-  Share(Activity activity) {
+  Share(Activity activity, int id) {
+    this.id = id;
     this.activity = activity;
   }
 
