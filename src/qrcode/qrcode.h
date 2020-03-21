@@ -37,6 +37,8 @@ BEGIN_C_DECLS
  * @method qrcode_scan
  * 请求扫描二维码。
  *
+ * > 回调函数是在 AWTK UI 线程中执行的，可以在回调函数中直接操作 AWTK 控件。
+ * 
  * @annotation ["static"]
  * @param {const char*} title 标题。
  * @param {platform_request_on_result_t} on_result 完成时的回调函数。
@@ -44,7 +46,7 @@ BEGIN_C_DECLS
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t qrcode_scan(const char* title, platform_request_on_result_t on_result, void* on_result_ctx);
+ret_t qrcode_scan(const char *title, platform_request_on_result_t on_result, void *on_result_ctx);
 
 END_C_DECLS
 

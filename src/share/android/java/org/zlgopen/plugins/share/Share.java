@@ -15,7 +15,7 @@ public class Share implements Plugin {
   private Activity activity;
 
   @Override
-  public void deinit() {
+  public void destroy() {
   }
 
   @Override

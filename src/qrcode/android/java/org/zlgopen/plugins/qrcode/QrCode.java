@@ -32,7 +32,7 @@ public class QrCode implements Plugin {
   public static final int RC_READ_PHOTO = 0X02;
 
   @Override
-  public void deinit() {
+  public void destroy() {
   }
 
   @Override

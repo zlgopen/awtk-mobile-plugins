@@ -75,7 +75,7 @@ public class PluginManager {
     while(iterator.hasNext()) {
        Map.Entry iter = (Map.Entry)iterator.next();
        Plugin plugin = (Plugin)(iter.getValue());
-       plugin.deinit();
+       plugin.destroy();
     }
 
     PluginManager.deinit();
