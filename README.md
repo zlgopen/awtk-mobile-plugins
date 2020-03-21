@@ -93,3 +93,4 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
 * [实现插件客户端](docs/plugin_client.md)
 * [实现插件服务端(android)](docs/plugin_android.md)
 * [实现插件服务端(ios)](docs/plugin_ios.md)
+* [插件目录结构](docs/plugin_folder_struct.md)
