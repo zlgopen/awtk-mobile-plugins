@@ -39,17 +39,27 @@ public class ImagePickerPlugin implements Plugin {
 
   @Override
   public boolean matchRequest(int requestCode, int resultCode, Intent data) {
+    Log.v("AWTK", "requestCode:" + Integer.toString(requestCode));
+
     return ImagePicker.shouldHandle(requestCode, resultCode, data);
   }
-  
+
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    String result = "";
     List<Image> images = ImagePicker.getImages(data);
-    Image image = ImagePicker.getFirstImageOrNull(data);
-    String info = String.format("{\"name\":\"%s\", \"path\":\"%s\"}",image.getName(), image.getPath());
-    
-    PluginManager.writeResult(this.callerInfo, info);
-    Log.v("AWTK", info);
+
+    for (int i = 0; i < images.size(); i++) {
+      Image image = images.get(0);
+
+      if (i > 0) {
+        result += ":";
+      }
+      result += image.getPath();
+    }
+
+    Log.v("AWTK", result);
+    PluginManager.writeResult(this.callerInfo, result);
 
     return;
   }
@@ -59,12 +69,12 @@ public class ImagePickerPlugin implements Plugin {
     try {
       this.callerInfo = callerInfo;
       JSONObject json = new JSONObject(args);
-      
-      if(action.equals("pick")) {
+
+      if (action.equals("pick")) {
         this.pick(json);
       }
 
-    } catch(JSONException e) {
+    } catch (JSONException e) {
       Log.v("AWTK", e.toString());
     }
 
@@ -77,13 +87,18 @@ public class ImagePickerPlugin implements Plugin {
   }
 
   void pick(JSONObject json) {
+    Log.v("AWTK", "pick:" + json.toString());
+
     try {
       boolean single = json.getBoolean("single");
-      boolean cameraOnly = json.getBoolean("camera_only");
-      boolean showCamera = json.getBoolean("show_camera");
+      boolean includeVideos = json.getBoolean("include_videos");
 
-      ImagePicker.create(this.activity).start();
-    }catch(JSONException e) {
+      if (single) {
+        ImagePicker.create(this.activity).includeVideo(includeVideos).single().start();
+      } else {
+        ImagePicker.create(this.activity).includeVideo(includeVideos).multi().start();
+      }
+    } catch (JSONException e) {
       ImagePicker.create(this.activity).start();
       Log.v("AWTK", e.toString());
     }

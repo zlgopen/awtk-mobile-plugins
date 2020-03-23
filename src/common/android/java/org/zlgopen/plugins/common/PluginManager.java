@@ -86,7 +86,6 @@ public class PluginManager {
     Set set = PluginManager.plugins.entrySet();
     Iterator iterator = set.iterator();
 
-    PluginManager.quited = true;
     while(iterator.hasNext()) {
        Map.Entry iter = (Map.Entry)iterator.next();
        Plugin plugin = (Plugin)(iter.getValue());

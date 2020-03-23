@@ -82,9 +82,11 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
 
 ## 插件列表
 
-* share 分享插件。
+* [share 分享插件](src/share/README.md)
 
-* qrcode 二维码识别插件。
+* [qrcode 二维码识别插件](src/qrcode/README.md)
+
+* [image_picker 图片/视频选择插件](src/image_picker/README.md)
 
 ## 文档
 

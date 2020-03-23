@@ -40,28 +40,11 @@ typedef struct _image_picker_options_t {
   bool_t single;
 
   /**
-   * @property {bool_t} camera_only
-   * 仅相机模式。
-   */
-  bool_t camera_only;
-
-  /**
-   * @property {bool_t} show_camera
+   * @property {bool_t} include_videos
    * 显示相机。
    */
-  bool_t show_camera;
+  bool_t include_videos;
 
-  /**
-   * @property {const char*} folder_title
-   * 目录标题。
-   */
-  const char* folder_title;
-  
-  /**
-   * @property {const char*} image_title
-   * 图片标题。
-   */
-  const char* image_title;
 } image_picker_options_t;
 
 /**
