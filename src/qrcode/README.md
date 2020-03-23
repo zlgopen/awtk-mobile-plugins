@@ -19,3 +19,5 @@ static ret_t qrcode_on_result(void* ctx, const char* data){
 
 qrcode_scan("scan qrcode", qrcode_on_result, ctx);
 ```
+
+> 本插件基于[ZXingLite](https://github.com/jenly1314/ZXingLite)实现。

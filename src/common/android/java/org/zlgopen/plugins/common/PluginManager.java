@@ -90,7 +90,7 @@ public class PluginManager {
     while(iterator.hasNext()) {
        Map.Entry iter = (Map.Entry)iterator.next();
        Plugin plugin = (Plugin)(iter.getValue());
-       if(plugin.matchRequest(requestCode)) {
+       if(plugin.matchRequest(requestCode, resultCode, data)) {
          plugin.onActivityResult(requestCode, resultCode, data);
        }
     }

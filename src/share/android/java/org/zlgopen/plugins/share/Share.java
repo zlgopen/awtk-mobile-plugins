@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import org.json.JSONException;
 import android.util.Log;
 
-public class Share implements Plugin {
+public class SharePlugin implements Plugin {
   private int id;
   private Activity activity;
 
@@ -19,7 +19,7 @@ public class Share implements Plugin {
   }
 
   @Override
-  public boolean matchRequest(int requestCode) {
+  public boolean matchRequest(int requestCode, int resultCode, Intent data) {
     return false;
   }
   
@@ -45,7 +45,7 @@ public class Share implements Plugin {
     return true;
   }
 
-  Share(Activity activity, int id) {
+  SharePlugin(Activity activity, int id) {
     this.id = id;
     this.activity = activity;
   }

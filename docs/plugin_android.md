@@ -20,26 +20,29 @@ public interface Plugin {
    * 匹配指定的请求码是否由本插件发出。
    * 
    * @param requestCode 请求码。
+   * @param resultCode  结果码.
+   * @param data        返回的数据。
+   * 
    * @return 请求码是否由本插件发出。
    */
-  public boolean matchRequest(int requestCode);
+  public boolean matchRequest(int requestCode, int resultCode, Intent data);
 
   /**
-   * 执行指定的 action。
+   * 执行指定的action。
    * 
    * @param action     动作名称。
    * @param callerInfo 调用者的信息，用于返回结果。
-   * @param args       参数。一般用 json 格式。
+   * @param args       参数。一般用json格式。
    * 
    * @return 是否执行成功。
    */
   public boolean run(String action, String callerInfo, String args);
 
   /**
-   * 当请求是由另外一个 Activity 执行时，执行完成后调用本函数返回执行结果。
+   * 当请求是由另外一个Activity执行时，执行完成后调用本函数返回执行结果。
    * 
-   * @param requestCode 请求码。
-   * @param resultCode  结果码。
+   * @param requestCode 请求码.
+   * @param resultCode  结果码.
    * @param data        返回的数据。
    * 
    * @return 无。
@@ -62,7 +65,7 @@ PluginManager 通过用 requestCode 来区分请求是由那个 Plugin 发起的
 检查请求是否由 plugin 发出：
 
 ```c
-  public boolean matchRequest(int requestCode) {
+  public boolean matchRequest(int requestCode, int resultCode, Intent data) {
     int id = requestCode >> 16;
     
     return this.id == id;

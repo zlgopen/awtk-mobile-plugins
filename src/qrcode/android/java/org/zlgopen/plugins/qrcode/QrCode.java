@@ -17,7 +17,7 @@ import android.content.Intent;
 import android.provider.MediaStore;
 import android.content.Intent;
 
-public class QrCode implements Plugin {
+public class QrCodePlugin implements Plugin {
   private int id;
   private String callerInfo;
   private Activity activity;
@@ -36,7 +36,7 @@ public class QrCode implements Plugin {
   }
 
   @Override
-  public boolean matchRequest(int requestCode) {
+  public boolean matchRequest(int requestCode, int resultCode, Intent data) {
     int id = requestCode >> 16;
     Log.v("AWTK", id + "(id)vs " + this.id);
     
@@ -68,12 +68,13 @@ public class QrCode implements Plugin {
 
     } catch(JSONException e) {
       Log.v("AWTK", e.toString());
+      PluginManager.writeResult(this.callerInfo, "fail");
     }
 
     return true;
   }
 
-  QrCode(Activity activity, int id) {
+  QrCodePlugin(Activity activity, int id) {
     this.id = id;
     this.activity = activity;
   }

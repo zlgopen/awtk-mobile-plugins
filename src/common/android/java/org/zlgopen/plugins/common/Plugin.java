@@ -20,9 +20,12 @@ public interface Plugin {
    * 匹配指定的请求码是否由本插件发出。
    * 
    * @param requestCode 请求码。
+   * @param resultCode  结果码.
+   * @param data        返回的数据。
+   * 
    * @return 请求码是否由本插件发出。
    */
-  public boolean matchRequest(int requestCode);
+  public boolean matchRequest(int requestCode, int resultCode, Intent data);
 
   /**
    * 执行指定的action。

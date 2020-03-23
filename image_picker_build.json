@@ -1,0 +1,15 @@
+{
+  "name":"image_picker_demo",
+  "version":"1.0",
+  "assets" : "assets",
+  "includes" : [".", "src"],
+  "android" : {
+    "plugins":["image_picker"],
+    "app_name":"org.zlgopen.image_pickerdemo",
+    "sources":["demos/image_picker.c",  "demos/assets*.c", "demos/assets*.inc"]
+  },
+  "ios" : {
+    "app_name":"org.zlgopen.image_pickerdemo",
+    "sources":["demos/image_picker.c","demos/assets*.c", "demos/assets*.inc"]
+  }
+}
