@@ -1,7 +1,7 @@
 ﻿/**
- * File:   button.c
+ * File:   share.c
  * Author: AWTK Develop Team
- * Brief:  button demo
+ * Brief:  share demo
  *
  * Copyright (c) 2018 - 2020  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
@@ -15,7 +15,7 @@
 /**
  * History:
  * ================================================================
- * 2018-08-16 Li XianJing <xianjimli@hotmail.com> created
+ * 2020-03-20 Li XianJing <xianjimli@hotmail.com> created
  *
  */
 

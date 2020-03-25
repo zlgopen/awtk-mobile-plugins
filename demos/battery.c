@@ -1,7 +1,7 @@
 ﻿/**
- * File:   qrcode.c
+ * File:   battery.c
  * Author: AWTK Develop Team
- * Brief:  qrcode demo
+ * Brief:  battery demo
  *
  * Copyright (c) 2018 - 2020  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
@@ -20,20 +20,29 @@
  */
 
 #include "awtk.h"
-#include "qrcode/qrcode.h"
+#include "battery/battery.h"
 
-static ret_t qrcode_on_result(void* ctx, const char* data){
+static ret_t battery_on_event(void* ctx, const char* data){
   widget_t* result_label = WIDGET(ctx);
 
   widget_set_text_utf8(result_label, data);
-  log_debug("qrcode:%s\n", data);
+  log_debug("battery:%s\n", data);
+
+  return RET_OK;
+}
+
+static ret_t battery_on_result(void* ctx, const char* data){
+  widget_t* result_label = WIDGET(ctx);
+
+  widget_set_text_utf8(result_label, data);
+  log_debug("battery:%s\n", data);
 
   return RET_OK;
 }
 
 static ret_t on_click(void* ctx, event_t* e) {
 
-  qrcode_scan("hello", qrcode_on_result, ctx);
+  battery_get_info(battery_on_result, ctx);
   return RET_OK;
 }
 
@@ -45,9 +54,10 @@ ret_t application_init() {
   widget_set_text(result, L"none");
   widget_set_self_layout_params(result, "center", "middle:60", "50%", "30");
 
-  widget_set_text(ok, L"Scan");
+  widget_set_text(ok, L"Update");
   widget_set_self_layout_params(ok, "center", "middle", "50%", "30");
   widget_on(ok, EVT_CLICK, on_click, result);
+  battery_register(battery_on_event, result);
 
   widget_layout(win);
 
@@ -55,6 +65,7 @@ ret_t application_init() {
 }
 
 ret_t application_exit() {
+  battery_unregister();
   log_debug("application_exit\n");
   return RET_OK;
 }

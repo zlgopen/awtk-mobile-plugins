@@ -4,6 +4,9 @@ import sys
 env=DefaultEnvironment().Clone()
 LIB_DIR=os.environ['LIB_DIR'];
 
-SOURCES = Glob('common/*.c') + Glob('share/*.c') + Glob('qrcode/*.c') + Glob('image_picker/*.c')
+SOURCES = Glob('common/*.c') + Glob('share/*.c') \
+  + Glob('qrcode/*.c') \
+  + Glob('image_picker/*.c') \
+  + Glob('battery/*.c')
 env.Library(os.path.join(LIB_DIR, 'plugins'), SOURCES);
 

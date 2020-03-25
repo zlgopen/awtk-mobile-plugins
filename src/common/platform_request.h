@@ -27,6 +27,7 @@
 BEGIN_C_DECLS
 
 typedef ret_t (*platform_request_on_result_t)(void* ctx, const char* result_data);
+typedef ret_t (*platform_on_event_t)(void* ctx, const char* event_data);
 
 /**
  * @class platform_request_t
