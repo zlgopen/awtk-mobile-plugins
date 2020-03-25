@@ -117,9 +117,8 @@ public class BatteryPlugin implements Plugin {
                 result = "{}";
               }
 
-              PluginManager.writeResult(onEvent, intent.getAction());
-
-              Log.v("AWTK", intent.getAction());
+              Log.v("AWTK", result);
+              PluginManager.writeResult(onEvent, result);
             }
          };
          
