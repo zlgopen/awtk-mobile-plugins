@@ -82,7 +82,8 @@ public class BatteryPlugin implements Plugin {
     int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
     int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-    String result = "{\"level\":" + Integer.toString(level) + 
+    String result = "{\"action\":" + Intent.ACTION_BATTERY_CHANGED + 
+      ",\"level\":" + Integer.toString(level) + 
       ",\"scale\":" + Integer.toString(level) + "}";
     PluginManager.writeResult(this.callerInfo, result);
 
@@ -100,9 +101,22 @@ public class BatteryPlugin implements Plugin {
          receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-              int currentBattery = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-              int totalBattery = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
-             
+              String result;
+              String action = intent.getAction();
+              if(action.equals(BatteryManager.ACTION_CHARGING)) {
+                result = "{\"action\":" + action + "}";
+              } else if(action.equals(BatteryManager.ACTION_DISCHARGING)) {
+                result = "{\"action\":" + action + "}";
+              } else if(action.equals(Intent.ACTION_BATTERY_CHANGED)) {
+                int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
+                result = "{\"action\":" + action +
+                  ",\"level\":" + Integer.toString(level) + 
+                  ",\"scale\":" + Integer.toString(level) + "}";
+              } else {
+                result = "{}";
+              }
+
               PluginManager.writeResult(onEvent, intent.getAction());
 
               Log.v("AWTK", intent.getAction());
