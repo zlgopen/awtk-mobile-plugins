@@ -35,6 +35,7 @@ static ret_t battery_on_result(void* ctx, const char* data){
   widget_t* result_label = WIDGET(ctx);
 
   widget_set_text_utf8(result_label, data);
+  widget_invalidate_force(result_label, NULL);
   log_debug("battery:%s\n", data);
 
   return RET_OK;
@@ -52,7 +53,7 @@ ret_t application_init() {
   widget_t* result = label_create(win, 0, 0, 0, 0);
 
   widget_set_text(result, L"none");
-  widget_set_self_layout_params(result, "center", "middle:60", "50%", "30");
+  widget_set_self_layout_params(result, "center", "middle:60", "100%", "30");
 
   widget_set_text(ok, L"Update");
   widget_set_self_layout_params(ok, "center", "middle", "50%", "30");

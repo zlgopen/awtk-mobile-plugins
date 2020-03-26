@@ -88,6 +88,8 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
 
 * [image_picker 图片/视频选择插件](src/image_picker/README.md)
 
+* [battery 电池电量插件](src/battery/README.md)
+
 ## 文档
 
 * [系统架构](docs/arch.md)

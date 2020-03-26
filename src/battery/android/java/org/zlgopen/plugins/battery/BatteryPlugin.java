@@ -82,7 +82,7 @@ public class BatteryPlugin implements Plugin {
     int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
     int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-    String result = "{\"action\":" + Intent.ACTION_BATTERY_CHANGED + 
+    String result = "{\"action\":\"get_info\"" + 
       ",\"level\":" + Integer.toString(level) + 
       ",\"scale\":" + Integer.toString(level) + "}";
     PluginManager.writeResult(this.callerInfo, result);
@@ -104,13 +104,13 @@ public class BatteryPlugin implements Plugin {
               String result;
               String action = intent.getAction();
               if(action.equals(BatteryManager.ACTION_CHARGING)) {
-                result = "{\"action\":" + action + "}";
+                result = "{\"action\":\"charging\"}";
               } else if(action.equals(BatteryManager.ACTION_DISCHARGING)) {
-                result = "{\"action\":" + action + "}";
+                result = "{\"action\":\"discharging\"}";
               } else if(action.equals(Intent.ACTION_BATTERY_CHANGED)) {
                 int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                 int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
-                result = "{\"action\":" + action +
+                result = "{\"action\":\"changed\"" +
                   ",\"level\":" + Integer.toString(level) + 
                   ",\"scale\":" + Integer.toString(level) + "}";
               } else {

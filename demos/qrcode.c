@@ -43,7 +43,7 @@ ret_t application_init() {
   widget_t* result = label_create(win, 0, 0, 0, 0);
 
   widget_set_text(result, L"none");
-  widget_set_self_layout_params(result, "center", "middle:60", "50%", "30");
+  widget_set_self_layout_params(result, "center", "middle:60", "100%", "30");
 
   widget_set_text(ok, L"Scan");
   widget_set_self_layout_params(ok, "center", "middle", "50%", "30");
