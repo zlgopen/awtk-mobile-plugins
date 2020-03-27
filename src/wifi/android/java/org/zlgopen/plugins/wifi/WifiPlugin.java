@@ -91,7 +91,11 @@ public class WifiPlugin implements Plugin {
           result += String.format("\"bssid\":\"%s\",\n", iter.BSSID);
           result += String.format("\"capabilities\":\"%s\",\n", iter.capabilities);
           result += String.format("\"frequency\":\"%d\"\n", iter.frequency);
-          result +=  "}\n";
+          if((i + 1) < items.size()) {
+            result +=  "},\n";
+          } else {
+            result +=  "}\n";
+          }
         }
 
         PluginManager.writeResult(callerInfo, result);
@@ -120,9 +124,9 @@ public class WifiPlugin implements Plugin {
       str = "{\n";
       str += "\"connected\":true,\n";
       if (connectionInfo != null) {
-        str += String.format("\"ssid\":\"%s\",\n", connectionInfo.getSSID());
+        str += String.format("\"ssid\":%s,\n", connectionInfo.getSSID());
         str += String.format("\"bssid\":\"%s\",\n", connectionInfo.getBSSID());
-        str += String.format("\"mac\":\"%s\"\n,", connectionInfo.getMacAddress());
+        str += String.format("\"mac\":\"%s\",\n", connectionInfo.getMacAddress());
         str += String.format("\"ip\":\"%d\"\n", connectionInfo.getIpAddress());
       }
       str += "}";
