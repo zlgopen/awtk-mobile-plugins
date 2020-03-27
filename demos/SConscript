@@ -6,5 +6,7 @@ BIN_DIR=os.environ['BIN_DIR'];
 
 env.Program(os.path.join(BIN_DIR, 'demo_share'), ['share.c', 'assets.c'])
 env.Program(os.path.join(BIN_DIR, 'demo_qrcode'), ['qrcode.c', 'assets.c'])
+env.Program(os.path.join(BIN_DIR, 'demo_battery'), ['battery.c', 'assets.c'])
 env.Program(os.path.join(BIN_DIR, 'demo_image_picker'), ['image_picker.c', 'assets.c'])
+env.Program(os.path.join(BIN_DIR, 'demo_wifi'), ['wifi.c', 'assets.c'])
 

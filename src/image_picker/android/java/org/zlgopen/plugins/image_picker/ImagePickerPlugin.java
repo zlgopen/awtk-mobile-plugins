@@ -1,7 +1,3 @@
-// Copyright 2019 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 package org.zlgopen.plugins;
 
 import java.util.ArrayList;
@@ -50,7 +46,7 @@ public class ImagePickerPlugin implements Plugin {
     List<Image> images = ImagePicker.getImages(data);
 
     for (int i = 0; i < images.size(); i++) {
-      Image image = images.get(0);
+      Image image = images.get(i);
 
       if (i > 0) {
         result += ":";

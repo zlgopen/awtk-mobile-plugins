@@ -1,0 +1,17 @@
+{
+  "name":"wifi",
+  "version":1.0,
+  "author":"awtk team",
+  "desc":"wifi scan",
+  "android" : {
+    "class":"WifiPlugin",
+    "permissions" : [
+      "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\" />",
+      "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />",
+      "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />",
+      "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />"
+    ],
+    "activities" : [],
+    "dependencies":[]
+  }
+}

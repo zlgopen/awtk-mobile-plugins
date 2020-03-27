@@ -90,6 +90,8 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
 
 * [battery 电池电量插件](src/battery/README.md)
 
+* [wifi 无线网络插件](src/wifi/README.md)
+
 ## 文档
 
 * [系统架构](docs/arch.md)
