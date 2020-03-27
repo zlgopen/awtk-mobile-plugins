@@ -28,21 +28,9 @@ ret_t wifi_scan(platform_request_on_result_t on_result, void* on_result_ctx) {
   return platform_request_send("wifi", "scan", "{}", on_result, on_result_ctx);
 }
 
-ret_t wifi_connect(const char* ssid, platform_request_on_result_t on_result, void *on_result_ctx) {
-  str_t str;
-  ret_t ret = 0;
-  return_value_if_fail(ssid != NULL && on_result != NULL, RET_BAD_PARAMS);
+ret_t wifi_get_info(platform_request_on_result_t on_result, void* on_result_ctx) {
+  return_value_if_fail(on_result != NULL, RET_BAD_PARAMS);
 
-  return_value_if_fail(str_init(&str, strlen(ssid) + 20) != NULL, RET_OOM);
-
-  str_append_char(&str, '{');
-  str_append_json_str_pair(&str, "ssid", ssid);
-  str_append_char(&str, '}');
-
-  ret = platform_request_send("wifi", "connect", str.str, on_result, on_result_ctx);
-
-  str_reset(&str);
-
-  return ret;
+  return platform_request_send("wifi", "get_info", "{}", on_result, on_result_ctx);
 }
 

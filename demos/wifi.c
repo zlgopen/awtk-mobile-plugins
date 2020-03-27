@@ -41,33 +41,23 @@ static ret_t on_info_clicked(void* ctx, event_t* e) {
   return RET_OK;
 }
 
-static ret_t on_conn_clicked(void* ctx, event_t* e) {
-  wifi_connect("test", wifi_on_result, ctx);
-  return RET_OK;
-}
-
 ret_t application_init() {
   widget_t* win = window_create(NULL, 0, 0, 0, 0);
   widget_t* scan = button_create(win, 0, 0, 0, 0);
   widget_t* info = button_create(win, 0, 0, 0, 0);
-  widget_t* conn = button_create(win, 0, 0, 0, 0);
   widget_t* result = label_create(win, 0, 0, 0, 0);
 
   widget_set_text(result, L"none");
   widget_set_self_layout_params(result, "0", "0", "100%", "-60");
 
   widget_set_text(scan, L"Scan");
-  widget_set_self_layout_params(scan, "10", "bottom:10", "80", "30");
+  widget_set_self_layout_params(scan, "center:-60", "bottom:10", "80", "30");
   widget_on(scan, EVT_CLICK, on_scan_clicked, result);
   
   widget_set_text(info, L"Info");
-  widget_set_self_layout_params(info, "center", "bottom:10", "80", "30");
+  widget_set_self_layout_params(info, "center:60", "bottom:10", "80", "30");
   widget_on(info, EVT_CLICK, on_info_clicked, result);
   
-  widget_set_text(conn, L"Connect");
-  widget_set_self_layout_params(conn, "right:10", "bottom:10", "80", "30");
-  widget_on(conn, EVT_CLICK, on_conn_clicked, result);
-
   widget_layout(win);
 
   return RET_OK;
