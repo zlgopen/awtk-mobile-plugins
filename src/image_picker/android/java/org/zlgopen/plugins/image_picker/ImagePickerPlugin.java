@@ -41,6 +41,10 @@ public class ImagePickerPlugin implements Plugin {
   @Override
   public boolean matchRequest(int requestCode, int resultCode, Intent data) {
     Log.v("AWTK", "requestCode:" + Integer.toString(requestCode));
+    int id = requestCode >> 16;
+    if(data == null && id == this.id) {
+      return true;
+    }
 
     return ImagePicker.shouldHandle(requestCode, resultCode, data);
   }
@@ -68,8 +72,11 @@ public class ImagePickerPlugin implements Plugin {
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+      Log.v("AWTK", "onRequestPermissionsResult granted");
       this.pick();
+    } else {
+      Log.v("AWTK", "onRequestPermissionsResult deny");
+      PluginManager.writeResult(this.callerInfo, "");
     }
   }
 
@@ -83,8 +90,8 @@ public class ImagePickerPlugin implements Plugin {
       if (action.equals("pick")) {
         if (ContextCompat.checkSelfPermission(this.activity,
             Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this.activity, new String[] { Manifest.permission.CAMERA }, 
-                this.id);
+            int id = this.id << 16;
+            ActivityCompat.requestPermissions(this.activity, new String[] { Manifest.permission.CAMERA },id);
         } else {
           this.pick();
         }
