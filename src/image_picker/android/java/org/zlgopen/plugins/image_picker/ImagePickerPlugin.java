@@ -12,7 +12,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.content.Intent;
-
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import android.content.pm.PackageManager;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.ImagePickerComponentHolder;
 import com.esafirm.imagepicker.features.ImagePickerConfig;
@@ -24,6 +27,8 @@ import com.esafirm.rximagepicker.RxImagePicker;
 
 public class ImagePickerPlugin implements Plugin {
   private int id;
+  private String action;
+  private JSONObject args;
   private String callerInfo;
   private Activity activity;
 
@@ -61,15 +66,29 @@ public class ImagePickerPlugin implements Plugin {
   }
 
   @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+      this.pick();
+    }
+  }
+
+  @Override
   public boolean run(String action, String callerInfo, String args) {
     try {
+      this.action = action;
       this.callerInfo = callerInfo;
-      JSONObject json = new JSONObject(args);
+      this.args = new JSONObject(args);
 
       if (action.equals("pick")) {
-        this.pick(json);
+        if (ContextCompat.checkSelfPermission(this.activity,
+            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.activity, new String[] { Manifest.permission.CAMERA }, 
+                this.id);
+        } else {
+          this.pick();
+        }
       }
-
     } catch (JSONException e) {
       Log.v("AWTK", e.toString());
     }
@@ -82,7 +101,8 @@ public class ImagePickerPlugin implements Plugin {
     this.activity = activity;
   }
 
-  void pick(JSONObject json) {
+  void pick() {
+    JSONObject json = this.args;
     Log.v("AWTK", "pick:" + json.toString());
 
     try {

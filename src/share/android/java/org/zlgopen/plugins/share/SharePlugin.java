@@ -23,6 +23,11 @@ public class SharePlugin implements Plugin {
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     return;
   }
+  
+  @Override
+  public void onRequestPermissionsResult(int requestCode,
+        String[] permissions, int[] grantResults) {
+  }
 
   @Override
   public boolean run(String action, String callerInfo, String args) {

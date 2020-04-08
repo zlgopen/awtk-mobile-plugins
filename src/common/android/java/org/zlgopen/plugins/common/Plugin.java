@@ -26,6 +26,9 @@ public interface Plugin {
    * @return 请求码是否由本插件发出。
    */
   public boolean matchRequest(int requestCode, int resultCode, Intent data);
+  
+  public void onRequestPermissionsResult(int requestCode,
+        String[] permissions, int[] grantResults);
 
   /**
    * 执行指定的action。

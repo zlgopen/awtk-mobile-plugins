@@ -34,6 +34,11 @@ public class WifiPlugin implements Plugin {
 
     return this.id == id;
   }
+  
+  @Override
+  public void onRequestPermissionsResult(int requestCode,
+        String[] permissions, int[] grantResults) {
+  }
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {

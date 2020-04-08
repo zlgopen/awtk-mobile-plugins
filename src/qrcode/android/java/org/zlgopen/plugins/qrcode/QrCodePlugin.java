@@ -40,6 +40,11 @@ public class QrCodePlugin implements Plugin {
   }
   
   @Override
+  public void onRequestPermissionsResult(int requestCode,
+        String[] permissions, int[] grantResults) {
+  }
+  
+  @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     int code = requestCode & 0xffff;
     Log.v("AWTK", code + "(code)vs: " + REQUEST_CODE_SCAN);

@@ -39,6 +39,11 @@ public class BatteryPlugin implements Plugin {
   }
   
   @Override
+  public void onRequestPermissionsResult(int requestCode,
+        String[] permissions, int[] grantResults) {
+  }
+  
+  @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     return;
   }

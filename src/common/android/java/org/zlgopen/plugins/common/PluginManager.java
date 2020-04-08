@@ -96,7 +96,22 @@ public class PluginManager {
 
     return;
   }
-  
+ 
+  public static void onRequestPermissionsResult(int requestCode,
+        String[] permissions, int[] grantResults) {
+    Set set = PluginManager.plugins.entrySet();
+    Iterator iterator = set.iterator();
+
+    while(iterator.hasNext()) {
+       Map.Entry iter = (Map.Entry)iterator.next();
+       Plugin plugin = (Plugin)(iter.getValue());
+       if(plugin.matchRequest(requestCode, 0, null)) {
+         plugin.onRequestPermissionsResult(requestCode, permissions, grantResults);
+       }
+    }
+  }
+
+
   public static boolean run(String name, String callerInfo, String action, String args) {
     Plugin plugin = PluginManager.plugins.get(name);
 
