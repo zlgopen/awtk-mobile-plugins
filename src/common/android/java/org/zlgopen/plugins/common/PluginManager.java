@@ -15,8 +15,8 @@ public class PluginManager {
   static boolean quited = false;
   static HashMap<String, Plugin> plugins = new HashMap<>();
 
-  public static void runInUIThread(final String callerInfo, final String target, 
-      final String action, final String args) {
+  public static void runInUIThread(final String callerInfo, final String target, final String action,
+      final String args) {
     PluginManager.activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -31,16 +31,16 @@ public class PluginManager {
     new Thread(new Runnable() {
       @Override
       public void run() {
-        while(!(PluginManager.quited)) {
+        while (!(PluginManager.quited)) {
           String request = PluginManager.readRequest();
 
-          if(request == null) {
+          if (request == null) {
             continue;
           }
 
-          String items[] =  request.split(":", 5);
+          String items[] = request.split(":", 5);
 
-          if(items.length == 5) {
+          if (items.length == 5) {
             final String onResult = items[0];
             final String onResultCtx = items[1];
             final String target = items[2];
@@ -66,77 +66,78 @@ public class PluginManager {
     PluginManager.startThread();
     Log.v("AWTK", "PluginManager start");
   }
-  
+
   public static void stop() {
     Set set = PluginManager.plugins.entrySet();
     Iterator iterator = set.iterator();
 
     PluginManager.quited = true;
-    while(iterator.hasNext()) {
-       Map.Entry iter = (Map.Entry)iterator.next();
-       Plugin plugin = (Plugin)(iter.getValue());
-       plugin.destroy();
+    while (iterator.hasNext()) {
+      Map.Entry iter = (Map.Entry) iterator.next();
+      Plugin plugin = (Plugin) (iter.getValue());
+      plugin.destroy();
     }
 
     PluginManager.deinit();
     Log.v("AWTK", "PluginManager stop");
   }
-  
+
   public static void onActivityResult(int requestCode, int resultCode, Intent data) {
     Set set = PluginManager.plugins.entrySet();
     Iterator iterator = set.iterator();
 
-    while(iterator.hasNext()) {
-       Map.Entry iter = (Map.Entry)iterator.next();
-       Plugin plugin = (Plugin)(iter.getValue());
-       if(plugin.matchRequest(requestCode, resultCode, data)) {
-         plugin.onActivityResult(requestCode, resultCode, data);
-       }
+    while (iterator.hasNext()) {
+      Map.Entry iter = (Map.Entry) iterator.next();
+      Plugin plugin = (Plugin) (iter.getValue());
+      if (plugin.matchRequest(requestCode, resultCode, data)) {
+        plugin.onActivityResult(requestCode, resultCode, data);
+      }
     }
 
     return;
   }
- 
-  public static void onRequestPermissionsResult(int requestCode,
-        String[] permissions, int[] grantResults) {
+
+  public static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     Set set = PluginManager.plugins.entrySet();
     Iterator iterator = set.iterator();
 
-    while(iterator.hasNext()) {
-       Map.Entry iter = (Map.Entry)iterator.next();
-       Plugin plugin = (Plugin)(iter.getValue());
-       if(plugin.matchRequest(requestCode, 0, null)) {
-         plugin.onRequestPermissionsResult(requestCode, permissions, grantResults);
-       }
+    while (iterator.hasNext()) {
+      Map.Entry iter = (Map.Entry) iterator.next();
+      Plugin plugin = (Plugin) (iter.getValue());
+      if (plugin.matchRequest(requestCode, 0, null)) {
+        plugin.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      }
     }
   }
-
 
   public static boolean run(String name, String callerInfo, String action, String args) {
     Plugin plugin = PluginManager.plugins.get(name);
 
-    if(plugin != null) {
+    if (plugin != null) {
       return plugin.run(action, callerInfo, args);
     }
 
     return false;
   }
-  
+
   public static void register(String name, Plugin plugin) {
     PluginManager.plugins.put(name, plugin);
   }
-  
+
   public static void unregister(String name) {
     PluginManager.plugins.remove(name);
   }
-  
+
   public static void registerAll() {
     int id = 100;
     EXTRA_REGISTERS
   }
 
   public static native void init();
+
   public static native void deinit();
+
   public static native String readRequest();
+
   public static native void writeResult(String callerInfo, String result);
 }

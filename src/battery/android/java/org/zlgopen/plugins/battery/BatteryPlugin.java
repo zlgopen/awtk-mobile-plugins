@@ -22,7 +22,7 @@ public class BatteryPlugin implements Plugin {
   private BroadcastReceiver receiver;
 
   private void unregisterReceiver() {
-    if(this.receiver != null) {
+    if (this.receiver != null) {
       this.activity.unregisterReceiver(this.receiver);
       this.receiver = null;
     }
@@ -37,12 +37,11 @@ public class BatteryPlugin implements Plugin {
   public boolean matchRequest(int requestCode, int resultCode, Intent data) {
     return false;
   }
-  
+
   @Override
-  public void onRequestPermissionsResult(int requestCode,
-        String[] permissions, int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
   }
-  
+
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     return;
@@ -53,17 +52,17 @@ public class BatteryPlugin implements Plugin {
     try {
       this.callerInfo = callerInfo;
       JSONObject json = new JSONObject(args);
-      
-      if(action.equals("get_info")) {
+
+      if (action.equals("get_info")) {
         this.getInfo();
-      } else if(action.equals("register")) {
+      } else if (action.equals("register")) {
         this.register(json);
-      } else if(action.equals("unregister")) {
+      } else if (action.equals("unregister")) {
         this.unregister();
       } else {
         Log.v("AWTK", "not supported action");
       }
-    } catch(JSONException e) {
+    } catch (JSONException e) {
       Log.v("AWTK", e.toString());
       PluginManager.writeResult(this.callerInfo, "fail");
     }
@@ -83,54 +82,52 @@ public class BatteryPlugin implements Plugin {
     int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
     int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-    String result = "{\"action\":\"get_info\"" + 
-      ",\"level\":" + Integer.toString(level) + 
-      ",\"scale\":" + Integer.toString(level) + "}";
+    String result = "{\"action\":\"get_info\"" + ",\"level\":" + Integer.toString(level) + ",\"scale\":"
+        + Integer.toString(level) + "}";
     PluginManager.writeResult(this.callerInfo, result);
 
     return;
   }
-  
+
   void register(JSONObject json) {
-      try {
-        final String onEvent = json.getString("onevent");
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BatteryManager.ACTION_CHARGING);
-        intentFilter.addAction(BatteryManager.ACTION_DISCHARGING);
-        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+    try {
+      final String onEvent = json.getString("onevent");
+      IntentFilter intentFilter = new IntentFilter();
+      intentFilter.addAction(BatteryManager.ACTION_CHARGING);
+      intentFilter.addAction(BatteryManager.ACTION_DISCHARGING);
+      intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
 
-         receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-              String result;
-              String action = intent.getAction();
-              if(action.equals(BatteryManager.ACTION_CHARGING)) {
-                result = "{\"action\":\"charging\"}";
-              } else if(action.equals(BatteryManager.ACTION_DISCHARGING)) {
-                result = "{\"action\":\"discharging\"}";
-              } else if(action.equals(Intent.ACTION_BATTERY_CHANGED)) {
-                int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-                int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
-                result = "{\"action\":\"changed\"" +
-                  ",\"level\":" + Integer.toString(level) + 
-                  ",\"scale\":" + Integer.toString(level) + "}";
-              } else {
-                result = "{}";
-              }
+      receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          String result;
+          String action = intent.getAction();
+          if (action.equals(BatteryManager.ACTION_CHARGING)) {
+            result = "{\"action\":\"charging\"}";
+          } else if (action.equals(BatteryManager.ACTION_DISCHARGING)) {
+            result = "{\"action\":\"discharging\"}";
+          } else if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+            int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
+            result = "{\"action\":\"changed\"" + ",\"level\":" + Integer.toString(level) + ",\"scale\":"
+                + Integer.toString(level) + "}";
+          } else {
+            result = "{}";
+          }
 
-              Log.v("AWTK", result);
-              PluginManager.writeResult(onEvent, result);
-            }
-         };
-         
-         this.activity.registerReceiver(receiver, intentFilter);
-         
-         PluginManager.writeResult(this.callerInfo, "ok");
-      } catch(JSONException e) {
-        Log.v("AWTK", e.toString());
-        PluginManager.writeResult(this.callerInfo, "fail");
-        return;
-      }
+          Log.v("AWTK", result);
+          PluginManager.writeResult(onEvent, result);
+        }
+      };
+
+      this.activity.registerReceiver(receiver, intentFilter);
+
+      PluginManager.writeResult(this.callerInfo, "ok");
+    } catch (JSONException e) {
+      Log.v("AWTK", e.toString());
+      PluginManager.writeResult(this.callerInfo, "fail");
+      return;
+    }
   }
 
   void unregister() {

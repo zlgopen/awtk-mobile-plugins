@@ -18,15 +18,14 @@ public class SharePlugin implements Plugin {
   public boolean matchRequest(int requestCode, int resultCode, Intent data) {
     return false;
   }
-  
+
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     return;
   }
-  
+
   @Override
-  public void onRequestPermissionsResult(int requestCode,
-        String[] permissions, int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
   }
 
   @Override
@@ -37,7 +36,7 @@ public class SharePlugin implements Plugin {
       String subject = json.getString("subject");
 
       this.share(text, subject);
-    } catch(JSONException e) {
+    } catch (JSONException e) {
       Log.v("AWTK", e.toString());
     }
 

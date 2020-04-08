@@ -39,16 +39,15 @@ public class WifiPlugin implements Plugin {
 
     return this.id == id;
   }
-  
+
   @Override
-  public void onRequestPermissionsResult(int requestCode,
-        String[] permissions, int[] grantResults) {
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     int code = requestCode & 0xffff;
     if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
       Log.v("AWTK", "onRequestPermissionsResult granted");
-      if(code == SCAN_CODE) {
+      if (code == SCAN_CODE) {
         this.scan();
-      } else if(code == GET_INFO_CODE) {
+      } else if (code == GET_INFO_CODE) {
         this.getInfo();
       }
     } else {
@@ -63,25 +62,26 @@ public class WifiPlugin implements Plugin {
   }
 
   public boolean hasPermissions() {
-    if(ContextCompat.checkSelfPermission(this.activity,
+    if (ContextCompat.checkSelfPermission(this.activity,
         Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
       return false;
     }
-    if(ContextCompat.checkSelfPermission(this.activity,
+    if (ContextCompat.checkSelfPermission(this.activity,
         Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
       return false;
     }
-    if(ContextCompat.checkSelfPermission(this.activity,
+    if (ContextCompat.checkSelfPermission(this.activity,
         Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
       return false;
     }
-    if(ContextCompat.checkSelfPermission(this.activity,
+    if (ContextCompat.checkSelfPermission(this.activity,
         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
       return false;
     }
 
     return true;
   }
+
   @Override
   public boolean run(String action, String callerInfo, String args) {
     try {
@@ -89,19 +89,17 @@ public class WifiPlugin implements Plugin {
       JSONObject json = new JSONObject(args);
 
       if (!this.hasPermissions()) {
-          int code = 0;
-          if (action.equals("scan")) {
-            code = (this.id << 16) | SCAN_CODE;
-          } else if (action.equals("get_info")) {
-            code = (this.id << 16) | GET_INFO_CODE;
-          }
+        int code = 0;
+        if (action.equals("scan")) {
+          code = (this.id << 16) | SCAN_CODE;
+        } else if (action.equals("get_info")) {
+          code = (this.id << 16) | GET_INFO_CODE;
+        }
 
-          ActivityCompat.requestPermissions(this.activity, new String[] { 
-            Manifest.permission.CHANGE_WIFI_STATE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-          }, code);
+        ActivityCompat.requestPermissions(this.activity,
+            new String[] { Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION },
+            code);
       } else {
         if (action.equals("scan")) {
           this.scan();
@@ -126,34 +124,33 @@ public class WifiPlugin implements Plugin {
   void scan() {
     Activity activity = this.activity;
     String callerInfo = this.callerInfo;
-    WifiManager wifiManager = (WifiManager)activity.getSystemService(Context.WIFI_SERVICE);
+    WifiManager wifiManager = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
 
     BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context c, Intent intent) {
-        boolean success = intent.getBooleanExtra(
-                           WifiManager.EXTRA_RESULTS_UPDATED, false);
+        boolean success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false);
         if (success) {
           Log.v("AWTK", "wifi scan success");
         } else {
           Log.v("AWTK", "wifi scan fail");
         }
-        
+
         String result = "";
         List<ScanResult> items = wifiManager.getScanResults();
 
         for (int i = 0; i < items.size(); i++) {
           ScanResult iter = items.get(i);
 
-          result +=  "{\n";
+          result += "{\n";
           result += String.format("\"ssid\":\"%s\",\n", iter.SSID);
           result += String.format("\"bssid\":\"%s\",\n", iter.BSSID);
           result += String.format("\"capabilities\":\"%s\",\n", iter.capabilities);
           result += String.format("\"frequency\":%d\n", iter.frequency);
-          if((i + 1) < items.size()) {
-            result +=  "},\n";
+          if ((i + 1) < items.size()) {
+            result += "},\n";
           } else {
-            result +=  "}\n";
+            result += "}\n";
           }
         }
 
@@ -170,7 +167,7 @@ public class WifiPlugin implements Plugin {
       PluginManager.writeResult(callerInfo, "{}");
     }
   }
- 
+
   private String getNetWorkInfo() {
     String str = "{}";
     Activity activity = this.activity;
@@ -192,10 +189,10 @@ public class WifiPlugin implements Plugin {
     }
 
     return str;
-}
+  }
 
   void getInfo() {
     String callerInfo = this.callerInfo;
-     PluginManager.writeResult(callerInfo, this.getNetWorkInfo());
+    PluginManager.writeResult(callerInfo, this.getNetWorkInfo());
   }
 }
