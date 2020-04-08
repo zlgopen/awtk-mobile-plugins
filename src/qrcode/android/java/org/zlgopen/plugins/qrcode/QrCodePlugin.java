@@ -12,9 +12,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.content.Intent;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import android.content.pm.PackageManager;
 
 public class QrCodePlugin implements Plugin {
   private int id;
+  private String title;
   private String callerInfo;
   private Activity activity;
   public static final String KEY_TITLE = "key_title";
@@ -42,6 +47,16 @@ public class QrCodePlugin implements Plugin {
   @Override
   public void onRequestPermissionsResult(int requestCode,
         String[] permissions, int[] grantResults) {
+    int code = requestCode & 0xffff;
+    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      Log.v("AWTK", "onRequestPermissionsResult granted");
+      if(code == REQUEST_CODE_SCAN) {
+        this.scan();
+      }
+    } else {
+      Log.v("AWTK", "onRequestPermissionsResult deny");
+      PluginManager.writeResult(this.callerInfo, "");
+    }
   }
   
   @Override
@@ -61,10 +76,17 @@ public class QrCodePlugin implements Plugin {
     try {
       this.callerInfo = callerInfo;
       JSONObject json = new JSONObject(args);
-      String title = json.getString("title");
+      this.title = json.getString("title");
       
       if(action.equals("scan")) {
-        this.scan(title);
+        if (ContextCompat.checkSelfPermission(this.activity,
+            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            int code = (this.id << 16) | REQUEST_CODE_SCAN;
+            ActivityCompat.requestPermissions(this.activity, new String[] { Manifest.permission.CAMERA }, 
+                code);
+        } else {
+          this.scan();
+        }
       }
 
     } catch(JSONException e) {
@@ -80,8 +102,9 @@ public class QrCodePlugin implements Plugin {
     this.activity = activity;
   }
 
-  void scan(String title) {
-    int code = this.id << 16 | REQUEST_CODE_SCAN;
+  void scan() {
+    String title = this.title;
+    int code = (this.id << 16) | REQUEST_CODE_SCAN;
     Intent intent = new Intent(this.activity, CaptureActivity.class);
     intent.putExtra(KEY_TITLE,title);
     intent.putExtra(KEY_IS_CONTINUOUS, true);
