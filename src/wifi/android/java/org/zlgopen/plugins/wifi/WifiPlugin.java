@@ -16,12 +16,17 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiInfo;
 import android.net.NetworkInfo;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import android.content.pm.PackageManager;
 
 public class WifiPlugin implements Plugin {
   private int id;
   private String callerInfo;
   private Activity activity;
-
+  private static int SCAN_CODE = 1;
+  private static int GET_INFO_CODE = 2;
 
   @Override
   public void destroy() {
@@ -38,6 +43,18 @@ public class WifiPlugin implements Plugin {
   @Override
   public void onRequestPermissionsResult(int requestCode,
         String[] permissions, int[] grantResults) {
+    int code = requestCode & 0xffff;
+    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      Log.v("AWTK", "onRequestPermissionsResult granted");
+      if(code == SCAN_CODE) {
+        this.scan();
+      } else if(code == GET_INFO_CODE) {
+        this.getInfo();
+      }
+    } else {
+      Log.v("AWTK", "onRequestPermissionsResult deny");
+      PluginManager.writeResult(this.callerInfo, "{}");
+    }
   }
 
   @Override
@@ -45,16 +62,52 @@ public class WifiPlugin implements Plugin {
     return;
   }
 
+  public boolean hasPermissions() {
+    if(ContextCompat.checkSelfPermission(this.activity,
+        Manifest.permission.CHANGE_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+      return false;
+    }
+    if(ContextCompat.checkSelfPermission(this.activity,
+        Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED) {
+      return false;
+    }
+    if(ContextCompat.checkSelfPermission(this.activity,
+        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+      return false;
+    }
+    if(ContextCompat.checkSelfPermission(this.activity,
+        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+      return false;
+    }
+
+    return true;
+  }
   @Override
   public boolean run(String action, String callerInfo, String args) {
     try {
       this.callerInfo = callerInfo;
       JSONObject json = new JSONObject(args);
 
-      if (action.equals("scan")) {
-        this.scan(callerInfo);
-      } else if (action.equals("get_info")) {
-        this.getInfo(callerInfo);
+      if (!this.hasPermissions()) {
+          int code = 0;
+          if (action.equals("scan")) {
+            code = (this.id << 16) | SCAN_CODE;
+          } else if (action.equals("get_info")) {
+            code = (this.id << 16) | GET_INFO_CODE;
+          }
+
+          ActivityCompat.requestPermissions(this.activity, new String[] { 
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+          }, code);
+      } else {
+        if (action.equals("scan")) {
+          this.scan();
+        } else if (action.equals("get_info")) {
+          this.getInfo();
+        }
       }
 
     } catch (JSONException e) {
@@ -70,8 +123,9 @@ public class WifiPlugin implements Plugin {
     this.activity = activity;
   }
 
-  void scan(final String callerInfo) {
+  void scan() {
     Activity activity = this.activity;
+    String callerInfo = this.callerInfo;
     WifiManager wifiManager = (WifiManager)activity.getSystemService(Context.WIFI_SERVICE);
 
     BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
@@ -140,7 +194,8 @@ public class WifiPlugin implements Plugin {
     return str;
 }
 
-  void getInfo(final String callerInfo) {
+  void getInfo() {
+    String callerInfo = this.callerInfo;
      PluginManager.writeResult(callerInfo, this.getNetWorkInfo());
   }
 }
