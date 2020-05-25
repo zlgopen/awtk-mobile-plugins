@@ -8,7 +8,7 @@
 #define APP_THEME "default"
 #endif /*APP_THEME*/
 
-ret_t assets_has_theme(const char* name) {
+bool_t assets_has_theme(const char* name) {
   return_value_if_fail(name != NULL, FALSE);
 
   if (tk_str_eq(name, "default")) {
@@ -71,7 +71,7 @@ static ret_t widget_set_theme_without_file_system(widget_t* widget, const char* 
   log_debug("theme changed: %s\n", name);
 
   return RET_OK;
-#else /*WITH_FS_RES*/
+#else  /*WITH_FS_RES*/
   return RET_NOT_IMPL;
 #endif /*WITH_FS_RES*/
 }
