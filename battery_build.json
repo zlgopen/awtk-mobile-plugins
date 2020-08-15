@@ -1,15 +1,15 @@
 {
   "name":"battery_demo",
   "version":"1.0",
-  "assets" : "assets",
+  "assets" : "res/assets",
   "includes" : [".", "src"],
   "android" : {
     "plugins":["battery"],
     "app_name":"org.zlgopen.batterydemo",
-    "sources":["demos/battery.c",  "demos/assets*.c", "assets/*.inc"]
+    "sources":["demos/battery.c", "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
   },
   "ios" : {
     "app_name":"org.zlgopen.batterydemo",
-    "sources":["demos/battery.c","demos/assets*.c", "assets/*.inc"]
+    "sources":["demos/battery.c","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
   }
 }
