@@ -26,6 +26,10 @@
 #include "tkc/socket_helper.h"
 #include "platform_request.h"
 
+#ifdef WIN32
+#pragma comment(lib, "ws2_32")
+#endif/*WIN32*/
+
 static int s_client_fd;
 static int s_server_fd;
 
