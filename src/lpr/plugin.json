@@ -1,0 +1,13 @@
+{
+  "name":"lpr",
+  "version":1.0,
+  "author":"awtk team",
+  "desc":"lpr scan",
+  "android" : {
+    "class":"LPRPlugin",
+    "permissions" : ["<uses-permission android:name=\"android.permission.CAMERA\" />", 
+                     "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />"],
+    "activities" : ["<activity android:name=\"com.pcl.ocr.ui.LPRActivity\" android:screenOrientation=\"portrait\" android:theme=\"@style/Theme.AppCompat.Light.NoActionBar\"/>"],
+    "dependencies":["implementation project(path: ':ocr')"]
+  }
+}

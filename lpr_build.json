@@ -1,0 +1,15 @@
+{
+  "name":"lpr_demo",
+  "version":"1.0",
+  "assets" : "res/assets",
+  "includes" : [".", "src"],
+  "android" : {
+    "plugins":["lpr"],
+    "app_name":"org.zlgopen.lprdemo",
+    "sources":["demos/lpr.c",  "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  },
+  "ios" : {
+    "app_name":"org.zlgopen.lprdemo",
+    "sources":["demos/lpr.c","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  }
+}
