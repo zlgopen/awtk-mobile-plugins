@@ -4,6 +4,9 @@
   "assets" : "res/assets",
   "includes" : [".", "src"],
   "android" : {
+    "features": {
+      "fullscreen":true
+    },
     "plugins":["battery"],
     "app_name":"org.zlgopen.batterydemo",
     "sources":["demos/battery.c", "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
