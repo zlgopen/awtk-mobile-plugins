@@ -141,9 +141,9 @@ public class WifiPlugin implements Plugin {
 
         for (int i = 0; i < items.size(); i++) {
           ScanResult iter = items.get(i);
-
           result += "{\n";
           result += String.format("\"ssid\":\"%s\",\n", iter.SSID);
+          result += String.format("\"level\":\"%s\",\n", iter.level);
           result += String.format("\"bssid\":\"%s\",\n", iter.BSSID);
           result += String.format("\"capabilities\":\"%s\",\n", iter.capabilities);
           result += String.format("\"frequency\":%d\n", iter.frequency);
@@ -184,6 +184,9 @@ public class WifiPlugin implements Plugin {
         str += String.format("\"bssid\":\"%s\",\n", connectionInfo.getBSSID());
         str += String.format("\"mac\":\"%s\",\n", connectionInfo.getMacAddress());
         str += String.format("\"ip\":%d\n", connectionInfo.getIpAddress());
+        str += String.format("\"freq\":%d\n", connectionInfo.getFrequency());
+        str += String.format("\"network_id\":%d\n", connectionInfo.getNetworkId());
+        str += String.format("\"link_speed\":%d\n", connectionInfo.getLinkSpeed());
       }
       str += "}";
     }

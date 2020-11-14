@@ -21,12 +21,16 @@
 
 #include "awtk.h"
 #include "wifi/wifi.h"
+#include "conf_io/conf_json.h"
 
 static ret_t wifi_on_result(void* ctx, const char* data){
   widget_t* result_label = WIDGET(ctx);
+  conf_doc_t* doc = conf_doc_load_json(data, strlen(data));
+  int32_t level = conf_doc_get_int(doc, "level", 0);
 
   widget_set_text_utf8(result_label, data);
-  log_debug("wifi:%s\n", data);
+  log_debug("wifi:%s level=%d\n", data, level);
+  conf_doc_destroy(doc);
 
   return RET_OK;
 }
