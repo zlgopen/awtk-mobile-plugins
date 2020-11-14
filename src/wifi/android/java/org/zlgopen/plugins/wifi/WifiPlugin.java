@@ -187,6 +187,7 @@ public class WifiPlugin implements Plugin {
         str += String.format("\"freq\":%d\n", connectionInfo.getFrequency());
         str += String.format("\"network_id\":%d\n", connectionInfo.getNetworkId());
         str += String.format("\"link_speed\":%d\n", connectionInfo.getLinkSpeed());
+        str += String.format("\"Sign\":%d\n", connectionInfo.getRssi());
       }
       str += "}";
     }
