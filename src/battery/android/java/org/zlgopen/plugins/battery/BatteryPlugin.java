@@ -81,8 +81,9 @@ public class BatteryPlugin implements Plugin {
 
     int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
     int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+    int charging = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
 
-    String result = "{\"action\":\"get_info\"" + ",\"level\":" + Integer.toString(level) + ",\"scale\":"
+    String result = "{\"action\":\"get_info\"" + ",\"charging\":" + Integer.toString(charging) + ",\"level\":" + Integer.toString(level) + ",\"scale\":"
         + Integer.toString(level) + "}";
     PluginManager.writeResult(this.callerInfo, result);
 

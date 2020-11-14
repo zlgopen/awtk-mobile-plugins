@@ -21,6 +21,7 @@
 
 #include "awtk.h"
 #include "battery/battery.h"
+#include "conf_io/app_conf.h"
 
 static ret_t battery_on_event(void* ctx, const char* data){
   widget_t* result_label = WIDGET(ctx);
@@ -37,6 +38,8 @@ static ret_t battery_on_result(void* ctx, const char* data){
   widget_set_text_utf8(result_label, data);
   widget_invalidate_force(result_label, NULL);
   log_debug("battery:%s\n", data);
+  app_conf_set_str("last_status", data);
+  app_conf_save();
 
   return RET_OK;
 }
@@ -51,8 +54,17 @@ ret_t application_init() {
   widget_t* win = window_create(NULL, 0, 0, 0, 0);
   widget_t* ok = button_create(win, 0, 0, 0, 0);
   widget_t* result = label_create(win, 0, 0, 0, 0);
+  const char* last_status = NULL;
 
-  widget_set_text(result, L"none");
+  app_conf_init_json("battery");
+  last_status = app_conf_get_str("last_status", NULL);
+  if(last_status == NULL) {
+    app_conf_set_str("last_status", "none");
+    app_conf_save();
+    last_status = app_conf_get_str("last_status", "no data");
+  }
+
+  widget_set_text_utf8(result, last_status);
   widget_set_self_layout_params(result, "center", "middle:60", "100%", "30");
 
   widget_set_text(ok, L"Update");
@@ -61,11 +73,12 @@ ret_t application_init() {
   battery_register(battery_on_event, result);
 
   widget_layout(win);
-
+  
   return RET_OK;
 }
 
 ret_t application_exit() {
+  app_conf_save();
   battery_unregister();
   log_debug("application_exit\n");
   return RET_OK;
