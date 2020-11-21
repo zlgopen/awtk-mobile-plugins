@@ -69,7 +69,7 @@ ret_t battery_unregister(void);
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-int battery_get_info(platform_request_on_result_t on_result, void* on_result_ctx);
+ret_t battery_get_info(platform_request_on_result_t on_result, void* on_result_ctx);
 
 END_C_DECLS
 

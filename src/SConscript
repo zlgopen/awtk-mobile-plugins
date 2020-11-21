@@ -9,6 +9,7 @@ SOURCES = Glob('common/*.c') + Glob('share/*.c') \
   + Glob('qrcode/*.c') \
   + Glob('image_picker/*.c') \
   + Glob('wifi/*.c') \
+  + Glob('foobar/*.c') \
   + Glob('battery/*.c')
 env.Library(os.path.join(LIB_DIR, 'plugins'), SOURCES);
 

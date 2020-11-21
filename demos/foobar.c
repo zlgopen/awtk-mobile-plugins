@@ -1,7 +1,7 @@
 ﻿/**
- * File:   battery.c
+ * File:   foobar.c
  * Author: AWTK Develop Team
- * Brief:  battery demo
+ * Brief:  foobar demo
  *
  * Copyright (c) 2018 - 2020  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
@@ -15,39 +15,29 @@
 /**
  * History:
  * ================================================================
- * 2020-03-20 Li XianJing <xianjimli@hotmail.com> created
+ * 2020-11-21 Li XianJing <xianjimli@hotmail.com> created
  *
  */
 
 #include "awtk.h"
-#include "battery/battery.h"
-#include "conf_io/app_conf.h"
-#include "conf_io/app_conf_init_json.h"
+#include "foobar/foobar.h"
+#include "conf_io/conf_json.h"
 
-static ret_t battery_on_event(void* ctx, const char* data){
+static ret_t foobar_on_result(void* ctx, const char* data){
   widget_t* result_label = WIDGET(ctx);
-
-  widget_set_text_utf8(result_label, data);
-  log_debug("battery:%s\n", data);
-
-  return RET_OK;
-}
-
-static ret_t battery_on_result(void* ctx, const char* data){
-  widget_t* result_label = WIDGET(ctx);
+  conf_doc_t* doc = conf_doc_load_json(data, strlen(data));
+  int result = conf_doc_get_int(doc, "result", 0);
+  log_debug("foobar:%s\n result:%d\n", data, result);
+  conf_doc_destroy(doc);
 
   widget_set_text_utf8(result_label, data);
   widget_invalidate_force(result_label, NULL);
-  log_debug("battery:%s\n", data);
-  app_conf_set_str("last_status", data);
-  app_conf_save();
 
   return RET_OK;
 }
 
 static ret_t on_click(void* ctx, event_t* e) {
-
-  battery_get_info(battery_on_result, ctx);
+  foobar_add(100, 200, foobar_on_result, ctx);
   return RET_OK;
 }
 
@@ -55,23 +45,12 @@ ret_t application_init() {
   widget_t* win = window_create(NULL, 0, 0, 0, 0);
   widget_t* ok = button_create(win, 0, 0, 0, 0);
   widget_t* result = label_create(win, 0, 0, 0, 0);
-  const char* last_status = NULL;
 
-  app_conf_init_json("battery");
-  last_status = app_conf_get_str("last_status", NULL);
-  if(last_status == NULL) {
-    app_conf_set_str("last_status", "none");
-    app_conf_save();
-    last_status = app_conf_get_str("last_status", "no data");
-  }
-
-  widget_set_text_utf8(result, last_status);
   widget_set_self_layout_params(result, "center", "middle:60", "100%", "30");
 
-  widget_set_text(ok, L"Update");
+  widget_set_text(ok, L"Add");
   widget_set_self_layout_params(ok, "center", "middle", "50%", "30");
   widget_on(ok, EVT_CLICK, on_click, result);
-  battery_register(battery_on_event, result);
 
   widget_layout(win);
   
@@ -79,8 +58,6 @@ ret_t application_init() {
 }
 
 ret_t application_exit() {
-  app_conf_save();
-  battery_unregister();
   log_debug("application_exit\n");
   return RET_OK;
 }

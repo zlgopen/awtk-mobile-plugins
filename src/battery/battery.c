@@ -52,7 +52,7 @@ ret_t battery_unregister(void) {
   return platform_request_send("battery", "unregister", "{}", battery_on_result, "unregister");
 }
 
-int battery_get_info(platform_request_on_result_t on_result, void* on_result_ctx) {
+ret_t battery_get_info(platform_request_on_result_t on_result, void* on_result_ctx) {
   ret_t ret = 0;
   return_value_if_fail(on_result, RET_BAD_PARAMS);
 

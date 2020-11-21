@@ -10,4 +10,5 @@ env.Program(os.path.join(BIN_DIR, 'demo_lpr'), ['lpr.c', 'assets.c'])
 env.Program(os.path.join(BIN_DIR, 'demo_battery'), ['battery.c', 'assets.c'])
 env.Program(os.path.join(BIN_DIR, 'demo_image_picker'), ['image_picker.c', 'assets.c'])
 env.Program(os.path.join(BIN_DIR, 'demo_wifi'), ['wifi.c', 'assets.c'])
+env.Program(os.path.join(BIN_DIR, 'demo_foobar'), ['foobar.c', 'assets.c'])
 

@@ -1,0 +1,18 @@
+{
+  "name":"foobar_demo",
+  "version":"1.0",
+  "assets" : "res/assets",
+  "includes" : [".", "src"],
+  "android" : {
+    "features": {
+      "fullscreen":true
+    },
+    "plugins":["foobar"],
+    "app_name":"org.zlgopen.foobardemo",
+    "sources":["demos/foobar.c", "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  },
+  "ios" : {
+    "app_name":"org.zlgopen.foobardemo",
+    "sources":["demos/foobar.c","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  }
+}
