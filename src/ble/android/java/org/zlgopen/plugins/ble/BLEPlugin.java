@@ -53,13 +53,19 @@ public class BLEPlugin implements Plugin {
     private List<BluetoothDevice> mBluetoothDevices;
     private List<BluetoothGatt> mBluetoothGatts;
 
-    private ScanCallback scanCallback = new ScanCallback() {
+    private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             BluetoothDevice device = result.getDevice();
             int rssi = result.getRssi();
             String addr = device.getAddress();
-            if (rssi >= -70) {
+            String name = device.getName();
+            int type = device.getType();
+            if (name != null) {
+                if (rssi >= -80 && type == BluetoothDevice.DEVICE_TYPE_LE) {
+                    Log.v("AWTK", "low rssi " + addr);
+                }
+
                 if (findDeviceByAddr(addr) == null) {
                     mBluetoothDevices.add(device);
                 }
@@ -89,18 +95,10 @@ public class BLEPlugin implements Plugin {
             Log.d("AWTK", "onConnectionStateChange (" + address + ") " + newState +
                     " status: " + status);
 
-            List<BluetoothGattService> services = gatt.getServices();
-            for (BluetoothGattService s : services) {
-                String uuid = s.getUuid().toString();
-                List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
-                for(BluetoothGattCharacteristic c : chars) {
-                    String cs = c.toString();
-                }
-            }
-
             try {
                 switch (newState) {
                     case BluetoothProfile.STATE_CONNECTED:
+                        gatt.discoverServices();
                         break;
                     case BluetoothProfile.STATE_DISCONNECTED:
                         break;
@@ -115,7 +113,53 @@ public class BLEPlugin implements Plugin {
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            int i = 0;
+            String str = "{\n";
             BluetoothDevice device = gatt.getDevice();
+            List<BluetoothGattService> services = gatt.getServices();
+
+            str += "\"type\":\"services\",\n";
+            str += String.format("\"address\":\"%s\",\n", device.getAddress());
+            str += "\"services\":[\n";
+            for (BluetoothGattService s : services) {
+                if (i > 0) {
+                    str += ",\n";
+                }
+
+                int j = 0;
+                str += "{\n";
+                str += String.format("\"uuid\":\"%s\",\n", s.getUuid().toString());
+                str += "\"characteristics\": [";
+                List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
+                for (BluetoothGattCharacteristic c : chars) {
+                    if (j > 0) {
+                        str += ",\n";
+                    }
+
+                    int k = 0;
+                    str += "{\n";
+                    str += String.format("\"uuid\":\"%s\",\n", c.getUuid().toString());
+                    str += String.format("\"descriptors\":[\n");
+                    List<BluetoothGattDescriptor> descs = c.getDescriptors();
+                    for (BluetoothGattDescriptor d : descs) {
+                        if (k > 0) {
+                            str += ",\n";
+                        }
+                        str += String.format("{\"uuid\":\"%s\"}\n", d.getUuid().toString());
+
+                        k++;
+                    }
+                    str += "]\n}\n";
+                    j++;
+                }
+                str += "]\n}\n";
+                i++;
+            }
+            str += "\n]\n}\n";
+
+            if (notifyReceiver != null) {
+                PluginManager.writeResult(notifyReceiver, str);
+            }
         }
 
         @Override
@@ -152,14 +196,14 @@ public class BLEPlugin implements Plugin {
                 return;
             }
             mBluetoothDevices.clear();
-            mBluetoothLeScanner.startScan(null, createScanSetting(), scanCallback);
+            mBluetoothLeScanner.startScan(null, createScanSetting(), mScanCallback);
             mScanning = true;
         } else {
             if (!mScanning) {
                 return;
             }
             mScanning = false;
-            mBluetoothLeScanner.stopScan(scanCallback);
+            mBluetoothLeScanner.stopScan(mScanCallback);
         }
     }
 
@@ -335,7 +379,7 @@ public class BLEPlugin implements Plugin {
     BluetoothDevice findDeviceByAddr(final String address) {
         for (BluetoothDevice device : mBluetoothDevices) {
             String devAddress = device.getAddress();
-            if (address.equals(devAddress))  {
+            if (address.equals(devAddress)) {
                 return device;
             }
         }
@@ -353,7 +397,6 @@ public class BLEPlugin implements Plugin {
                 conn = device.connectGatt(activity, true, mBluetoothGattCallback);
                 if (conn != null) {
                     mBluetoothGatts.add(conn);
-                    conn.discoverServices();
                     PluginManager.writeResult(this.callerInfo, "{\"result\":true, \"message\":\"success\"}");
                 } else {
                     PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"connect failed\"}");
