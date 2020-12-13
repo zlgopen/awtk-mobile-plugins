@@ -180,7 +180,7 @@ public class WifiPlugin implements Plugin {
       str = "{\n";
       str += "\"connected\":true,\n";
       if (connectionInfo != null) {
-        str += String.format("\"ssid\":%s,\n", connectionInfo.getSSID());
+        str += String.format("\"ssid\":\"%s\",\n", connectionInfo.getSSID());
         str += String.format("\"bssid\":\"%s\",\n", connectionInfo.getBSSID());
         str += String.format("\"mac\":\"%s\",\n", connectionInfo.getMacAddress());
         str += String.format("\"ip\":%d\n", connectionInfo.getIpAddress());
