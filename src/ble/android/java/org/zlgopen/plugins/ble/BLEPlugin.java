@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -87,6 +88,15 @@ public class BLEPlugin implements Plugin {
             String address = device.getAddress();
             Log.d("AWTK", "onConnectionStateChange (" + address + ") " + newState +
                     " status: " + status);
+
+            List<BluetoothGattService> services = gatt.getServices();
+            for (BluetoothGattService s : services) {
+                String uuid = s.getUuid().toString();
+                List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
+                for(BluetoothGattCharacteristic c : chars) {
+                    String cs = c.toString();
+                }
+            }
 
             try {
                 switch (newState) {
@@ -303,20 +313,29 @@ public class BLEPlugin implements Plugin {
 
     BluetoothGatt findConnectionByAddr(final String address) {
         for (BluetoothGatt c : mBluetoothGatts) {
-            if (address == c.getDevice().getAddress()) {
+            String devAddress = c.getDevice().getAddress();
+            if (address.equals(devAddress)) {
                 return c;
             }
         }
         return null;
     }
 
-    BluetoothDevice findDeviceByAddr(final String address) {
-        if (mBluetoothDevices.size() == 0) {
-            return null;
+    BluetoothDevice findDeviceByName(final String name) {
+        for (BluetoothDevice device : mBluetoothDevices) {
+            String devName = device.getName();
+            if (name.equals(devName)) {
+                return device;
+            }
         }
 
+        return null;
+    }
+
+    BluetoothDevice findDeviceByAddr(final String address) {
         for (BluetoothDevice device : mBluetoothDevices) {
-            if (address == device.getAddress()) {
+            String devAddress = device.getAddress();
+            if (address.equals(devAddress))  {
                 return device;
             }
         }
@@ -328,12 +347,13 @@ public class BLEPlugin implements Plugin {
         BluetoothGatt conn = this.findConnectionByAddr(address);
         if (conn == null) {
             //BluetoothDevice device = this.findDeviceByAddr(address);
-            BluetoothDevice device = mBluetoothDevices.get(0);
+            BluetoothDevice device = this.findDeviceByName("mi_mtk");
 
             if (device != null) {
                 conn = device.connectGatt(activity, true, mBluetoothGattCallback);
                 if (conn != null) {
                     mBluetoothGatts.add(conn);
+
                     PluginManager.writeResult(this.callerInfo, "{\"result\":true, \"message\":\"success\"}");
                 } else {
                     PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"connect failed\"}");
