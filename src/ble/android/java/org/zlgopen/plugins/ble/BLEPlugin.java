@@ -353,7 +353,7 @@ public class BLEPlugin implements Plugin {
                 conn = device.connectGatt(activity, true, mBluetoothGattCallback);
                 if (conn != null) {
                     mBluetoothGatts.add(conn);
-
+                    conn.discoverServices();
                     PluginManager.writeResult(this.callerInfo, "{\"result\":true, \"message\":\"success\"}");
                 } else {
                     PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"connect failed\"}");
