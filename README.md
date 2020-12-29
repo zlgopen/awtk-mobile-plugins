@@ -19,6 +19,12 @@ cd awtk; scons; cd -
 git clone https://github.com/zlgopen/awtk-mobile-plugins.git
 ```
 
+> 生成资源
+
+```
+python ./scripts/update_res.py all
+```
+
 3. 获取 awtk-android
 
 ```
