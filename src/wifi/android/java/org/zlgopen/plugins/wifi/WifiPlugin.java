@@ -180,13 +180,14 @@ public class WifiPlugin implements Plugin {
       str = "{\n";
       str += "\"connected\":true,\n";
       if (connectionInfo != null) {
-        str += String.format("\"ssid\":\"%s\",\n", connectionInfo.getSSID());
+        String ssid = connectionInfo.getSSID().replaceAll("\"", "");
+        str += String.format("\"ssid\":\"%s\",\n", ssid);
         str += String.format("\"bssid\":\"%s\",\n", connectionInfo.getBSSID());
         str += String.format("\"mac\":\"%s\",\n", connectionInfo.getMacAddress());
-        str += String.format("\"ip\":%d\n", connectionInfo.getIpAddress());
-        str += String.format("\"freq\":%d\n", connectionInfo.getFrequency());
-        str += String.format("\"network_id\":%d\n", connectionInfo.getNetworkId());
-        str += String.format("\"link_speed\":%d\n", connectionInfo.getLinkSpeed());
+        str += String.format("\"ip\":%d,\n", connectionInfo.getIpAddress());
+        str += String.format("\"freq\":%d,\n", connectionInfo.getFrequency());
+        str += String.format("\"network_id\":%d,\n", connectionInfo.getNetworkId());
+        str += String.format("\"link_speed\":%d,\n", connectionInfo.getLinkSpeed());
         str += String.format("\"Sign\":%d\n", connectionInfo.getRssi());
       }
       str += "}";
