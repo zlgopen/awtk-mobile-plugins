@@ -1,5 +1,0 @@
-﻿:%s/wifi/ble/g
-:%s/Wifi/BLE/g
-:%s/WIFI/BLE/g
-:wq
-

@@ -77,11 +77,8 @@ static ret_t ble_main_on_window_destroy(void* ctx, event_t* e) {
 }
 
 ret_t application_init() {
-  ble_t* ble = NULL;
-
   widget_t* win = window_open("ble_main");
-
-  ble = ble_create();
+  ble_t* ble = ble_create();
 
   ble_set_on_device_found(ble, ble_main_on_device_found, win);
   widget_on(win, EVT_DESTROY, ble_main_on_window_destroy, ble);
