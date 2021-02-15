@@ -132,6 +132,13 @@ public class PluginManager {
     int id = 100;
     EXTRA_REGISTERS
   }
+    public static void writeSuccess(String callerInfo, String action) {
+        PluginManager.writeResult(callerInfo, "{\"action\":\"" + action + "\",\"result\":true, \"message\":\"success\"}");
+    }
+
+    public static void writeFailure(String callerInfo, String action, String message) {
+        PluginManager.writeResult(callerInfo, "{\"action\":\"" + action + "\",\"result\":false, \"message\":\"" + message + "\"}");
+    }
 
   public static native void init();
 

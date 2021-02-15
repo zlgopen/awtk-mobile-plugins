@@ -33,4 +33,3 @@ ret_t wifi_get_info(platform_request_on_result_t on_result, void* on_result_ctx)
 
   return platform_request_send("wifi", "get_info", "{}", on_result, on_result_ctx);
 }
-

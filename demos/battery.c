@@ -24,7 +24,7 @@
 #include "conf_io/app_conf.h"
 #include "conf_io/app_conf_init_json.h"
 
-static ret_t battery_on_event(void* ctx, const char* data){
+static ret_t battery_on_event(void* ctx, const char* data) {
   widget_t* result_label = WIDGET(ctx);
 
   widget_set_text_utf8(result_label, data);
@@ -33,7 +33,7 @@ static ret_t battery_on_event(void* ctx, const char* data){
   return RET_OK;
 }
 
-static ret_t battery_on_result(void* ctx, const char* data){
+static ret_t battery_on_result(void* ctx, const char* data) {
   widget_t* result_label = WIDGET(ctx);
 
   widget_set_text_utf8(result_label, data);
@@ -46,7 +46,6 @@ static ret_t battery_on_result(void* ctx, const char* data){
 }
 
 static ret_t on_click(void* ctx, event_t* e) {
-
   battery_get_info(battery_on_result, ctx);
   return RET_OK;
 }
@@ -59,7 +58,7 @@ ret_t application_init() {
 
   app_conf_init_json("battery");
   last_status = app_conf_get_str("last_status", NULL);
-  if(last_status == NULL) {
+  if (last_status == NULL) {
     app_conf_set_str("last_status", "none");
     app_conf_save();
     last_status = app_conf_get_str("last_status", "no data");
@@ -74,7 +73,7 @@ ret_t application_init() {
   battery_register(battery_on_event, result);
 
   widget_layout(win);
-  
+
   return RET_OK;
 }
 

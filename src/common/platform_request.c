@@ -28,7 +28,7 @@
 
 #ifdef WIN32
 #pragma comment(lib, "ws2_32")
-#endif/*WIN32*/
+#endif /*WIN32*/
 
 static int s_client_fd;
 static int s_server_fd;
@@ -113,11 +113,11 @@ ret_t platform_request_send(const char* target, const char* action, const char* 
  * XXX: call str_reset by receiver thread
  * str_reset(&str);
  */
-#else 
+#else
   (void)ret;
   log_debug("plugins not supported: %s\n", s->str);
   str_reset(&str);
-#endif/*WITHOUT_PLUGINS*/
+#endif /*WITHOUT_PLUGINS*/
 
   return RET_OK;
 }

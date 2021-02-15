@@ -23,7 +23,7 @@
 #include "foobar/foobar.h"
 #include "conf_io/conf_json.h"
 
-static ret_t foobar_on_result(void* ctx, const char* data){
+static ret_t foobar_on_result(void* ctx, const char* data) {
   widget_t* result_label = WIDGET(ctx);
   conf_doc_t* doc = conf_doc_load_json(data, strlen(data));
   int result = conf_doc_get_int(doc, "result", 0);
@@ -53,7 +53,7 @@ ret_t application_init() {
   widget_on(ok, EVT_CLICK, on_click, result);
 
   widget_layout(win);
-  
+
   return RET_OK;
 }
 

@@ -22,7 +22,7 @@
 #include "awtk.h"
 #include "image_picker/image_picker.h"
 
-static ret_t image_picker_on_result(void* ctx, const char* data){
+static ret_t image_picker_on_result(void* ctx, const char* data) {
   str_t str;
   widget_t* win = WIDGET(ctx);
   const char* p = strchr(data, ':');
@@ -69,7 +69,7 @@ ret_t application_init() {
   widget_t* single = check_button_create(win, 0, 0, 0, 0);
   widget_t* include_videos = check_button_create(win, 0, 0, 0, 0);
   widget_t* result = label_create(win, 0, 0, 0, 0);
-  
+
   widget_set_name(single, "single");
   widget_set_name(result, "result");
   widget_set_name(image, "image");

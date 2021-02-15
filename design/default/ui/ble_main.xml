@@ -1,0 +1,13 @@
+<window anim_hint="htranslate">
+  <label x="0"  y="00" w="100%" h="30" text="BLE demo" />
+
+  <list_view x="0"  y="30" w="100%" h="-80" item_height="60">
+    <scroll_view name="devices" x="0"  y="0" w="100%" h="100%">
+      <list_item style="odd_clickable" name="temple" text="HC-42" />
+    </scroll_view>
+    <scroll_bar_m name="bar" x="right" y="0" w="6" h="100%" value="0"/>
+  </list_view>
+
+  <button name="scan" x="10%" y="bottom:10" w="30%" h="30" text="Scan"/>
+  <button name="close" x="r:10%" y="bottom:10" w="30%" h="30" text="Close" on:click="quit()"/>
+</window>

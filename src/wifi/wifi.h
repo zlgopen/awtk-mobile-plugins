@@ -45,7 +45,7 @@ BEGIN_C_DECLS
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t wifi_scan(platform_request_on_result_t on_result, void *on_result_ctx);
+ret_t wifi_scan(platform_request_on_result_t on_result, void* on_result_ctx);
 
 /**
  * @method wifi_get_info
@@ -59,7 +59,7 @@ ret_t wifi_scan(platform_request_on_result_t on_result, void *on_result_ctx);
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t wifi_get_info(platform_request_on_result_t on_result, void *on_result_ctx);
+ret_t wifi_get_info(platform_request_on_result_t on_result, void* on_result_ctx);
 
 END_C_DECLS
 

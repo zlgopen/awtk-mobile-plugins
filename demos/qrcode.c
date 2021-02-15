@@ -22,7 +22,7 @@
 #include "awtk.h"
 #include "qrcode/qrcode.h"
 
-static ret_t qrcode_on_result(void* ctx, const char* data){
+static ret_t qrcode_on_result(void* ctx, const char* data) {
   widget_t* result_label = WIDGET(ctx);
 
   widget_set_text_utf8(result_label, data);
@@ -32,7 +32,6 @@ static ret_t qrcode_on_result(void* ctx, const char* data){
 }
 
 static ret_t on_click(void* ctx, event_t* e) {
-
   qrcode_scan("hello", qrcode_on_result, ctx);
   return RET_OK;
 }

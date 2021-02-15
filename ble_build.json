@@ -9,10 +9,10 @@
     },
     "plugins":["ble"],
     "app_name":"org.zlgopen.bledemo",
-    "sources":["demos/ble.c", "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+    "sources":["demos/ble*.c", "demos/ble*.h","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
   },
   "ios" : {
     "app_name":"org.zlgopen.bledemo",
-    "sources":["demos/ble.c","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+    "sources":["demos/ble*.c", "demos/ble*.h","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
   }
 }

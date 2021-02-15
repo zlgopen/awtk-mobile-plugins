@@ -1,0 +1,25 @@
+<window anim_hint="htranslate">
+  <label name="name" x="0"  y="00" w="100%" h="30" text="00002a00-0000-1000-8000-00805f9b34fb" />
+
+  <list_view name="char" x="0"  y="30" w="100%" h="-80" item_height="60">
+    <scroll_view name="view" x="0"  y="0" w="100%" h="100%">
+      <list_item style="odd">
+        <button name="write" x="10"  y="middle" w="80" h="30" text="write" />
+        <edit name="write_data" x="100"  y="middle" w="-110" h="30" text="hello" />
+      </list_item >
+
+      <list_item style="even">
+        <button name="read" x="10"  y="middle" w="80" h="30" text="read" />
+        <edit name="read_data" readonly="true" x="100"  y="middle" w="-110" h="30" text="n/a" />
+      </list_item >
+
+      <list_item style="old">
+        <edit name="notify_data" readonly="true" x="10"  y="middle" w="-20" h="30" text="n/a" />
+      </list_item>
+
+    </scroll_view>
+    <scroll_bar_m name="bar" x="right" y="0" w="6" h="100%" value="0"/>
+  </list_view>
+
+  <button name="scan" x="center" y="bottom:10" w="30%" h="30" text="Back" on:click="back()"/>
+</window>

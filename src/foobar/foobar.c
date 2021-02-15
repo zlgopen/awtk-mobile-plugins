@@ -27,7 +27,7 @@ ret_t foobar_add(int a, int b, platform_request_on_result_t on_result, void* on_
   ret_t ret = 0;
   char args[64];
   return_value_if_fail(on_result, RET_BAD_PARAMS);
-  tk_snprintf(args, sizeof(args)-1, "{\"a\":%d, \"b\":%d}", a, b);
+  tk_snprintf(args, sizeof(args) - 1, "{\"a\":%d, \"b\":%d}", a, b);
   ret = platform_request_send("foobar", "add", args, on_result, on_result_ctx);
 
   return ret;

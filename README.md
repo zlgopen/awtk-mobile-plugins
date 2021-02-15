@@ -1,6 +1,6 @@
 # awtk-mobile-plugins
 
-用于访问手机平台 (android/ios) 原生服务的插件(如分享、登录、相机、扫描二维码和蓝牙等)
+用于访问手机平台 (android/ios) 原生服务的插件（如分享、登录、相机、扫描二维码和蓝牙等）
 
 >本项目目前处于实验阶段
 
@@ -83,7 +83,6 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
   }, 
 ```
 
-
 ## 编译 ios 版本（暂未支持）
 
 ## 插件列表
@@ -98,12 +97,13 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
 
 * [wifi 无线网络插件](src/wifi/README.md)
 
+* [低功耗蓝牙 BLE](src/ble/README.md)
+
 ## 文档
 
 * [系统架构](docs/arch.md)
 * [插件描述文件](docs/plugin_config.md)
 * [实现插件客户端](docs/plugin_client.md)
-* [实现插件服务端(android)](docs/plugin_android.md)
-* [实现插件服务端(ios)](docs/plugin_ios.md)
+* [实现插件服务端 (android)](docs/plugin_android.md)
+* [实现插件服务端 (ios)](docs/plugin_ios.md)
 * [插件目录结构](docs/plugin_folder_struct.md)
-

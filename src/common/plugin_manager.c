@@ -17,33 +17,30 @@
 #include "SDL.h"
 #include <jni.h>
 
-JNIEXPORT jstring JNICALL Java_org_zlgopen_plugins_PluginManager_readRequest(JNIEnv *env, jclass cls)
-{
+JNIEXPORT jstring JNICALL Java_org_zlgopen_plugins_PluginManager_readRequest(JNIEnv* env,
+                                                                             jclass cls) {
   str_t str;
   str_init(&str, 0);
-  if (platform_request_recv(&str) == RET_OK)
-  {
+  if (platform_request_recv(&str) == RET_OK) {
     jstring jstr = (*env)->NewStringUTF(env, str.str);
     str_reset(&str);
 
     return jstr;
-  }
-  else
-  {
+  } else {
     return (*env)->NewStringUTF(env, "");
   }
 }
 
-JNIEXPORT void JNICALL Java_org_zlgopen_plugins_PluginManager_writeResult(JNIEnv *env, jclass cls,
-                                                                          jstring jcallInfo, jstring jresult)
-{
+JNIEXPORT void JNICALL Java_org_zlgopen_plugins_PluginManager_writeResult(JNIEnv* env, jclass cls,
+                                                                          jstring jcallInfo,
+                                                                          jstring jresult) {
   void* ctx = NULL;
   platform_request_on_result_t on_result = NULL;
   const char* callInfo = (*env)->GetStringUTFChars(env, jcallInfo, JNI_FALSE);
-  const char* result  = (*env)->GetStringUTFChars(env, jresult, JNI_FALSE);
+  const char* result = (*env)->GetStringUTFChars(env, jresult, JNI_FALSE);
 
-  if(sscanf(callInfo, "%p:%p", &on_result, &ctx) == 2) {
-    if(on_result != NULL) {
+  if (sscanf(callInfo, "%p:%p", &on_result, &ctx) == 2) {
+    if (on_result != NULL) {
       on_result(ctx, result);
     }
   }
@@ -54,16 +51,14 @@ JNIEXPORT void JNICALL Java_org_zlgopen_plugins_PluginManager_writeResult(JNIEnv
   return;
 }
 
-JNIEXPORT void JNICALL Java_org_zlgopen_plugins_PluginManager_init(JNIEnv *env, jclass cls)
-{
+JNIEXPORT void JNICALL Java_org_zlgopen_plugins_PluginManager_init(JNIEnv* env, jclass cls) {
   platform_request_init();
   log_debug("Java_org_zlgopen_plugins_PluginManager_init\n");
 
   return;
 }
 
-JNIEXPORT void JNICALL Java_org_zlgopen_plugins_PluginManager_deinit(JNIEnv *env, jclass cls)
-{
+JNIEXPORT void JNICALL Java_org_zlgopen_plugins_PluginManager_deinit(JNIEnv* env, jclass cls) {
   platform_request_deinit();
   log_debug("Java_org_zlgopen_plugins_PluginManager_deinit\n");
 

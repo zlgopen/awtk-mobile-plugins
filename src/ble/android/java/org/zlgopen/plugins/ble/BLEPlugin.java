@@ -1,4 +1,6 @@
 package org.zlgopen.plugins;
+
+//参考资源
 //https://www.jianshu.com/p/3a372af38103
 //https://developer.android.com/reference/android/bluetooth/BluetoothGatt
 
@@ -29,49 +31,242 @@ import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class BLEPlugin implements Plugin {
     private int id;
     private Activity activity;
+    private String action;
     private String callerInfo;
     private String notifyReceiver;
 
     private static final int START_CODE = 1;
-    private static final int START_SCAN_CODE = 2;
-    private static final int STOP_SCAN_CODE = 3;
-    private static final int GET_INFO_CODE = 4;
-    private static final long SCAN_PERIOD = 10000;
 
     private Handler mHandler;
     private boolean mScanning;
     private boolean mStarted;
     private BluetoothAdapter mBluetoothAdapter;
+    private List<BluetoothGatt> mBluetoothGatts;
     private BluetoothLeScanner mBluetoothLeScanner;
     private List<BluetoothDevice> mBluetoothDevices;
-    private List<BluetoothGatt> mBluetoothGatts;
+
+    public static String byteArrayToHex(byte[] a) {
+        StringBuilder sb = new StringBuilder(a.length * 2);
+        for (byte b : a)
+            sb.append(String.format("%02x ", b));
+        return sb.toString();
+    }
+
+    public JSONArray serviceToJson(List<BluetoothGattService> services) {
+        try {
+            JSONArray json = new JSONArray();
+
+            for (BluetoothGattService s : services) {
+                JSONObject jsonService = new JSONObject();
+                JSONArray jsonChars = new JSONArray();
+
+                json.put(jsonService);
+                jsonService.put("uuid", s.getUuid().toString());
+                jsonService.put("chars", jsonChars);
+
+                List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
+                for (BluetoothGattCharacteristic c : chars) {
+                    JSONObject jsonChar = new JSONObject();
+                    JSONArray jsonDescs = new JSONArray();
+                    jsonChars.put(jsonChar);
+                    int permissions = c.getPermissions();
+
+                    jsonChar.put("uuid", c.getUuid().toString());
+                    jsonChar.put("descs", jsonDescs);
+
+                    int properties = c.getProperties();
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_BROADCAST) != 0x0) {
+                        jsonChar.put("Broadcast", true);
+                    }
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_READ) != 0x0) {
+                        jsonChar.put("Read", true);
+                    }
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0x0) {
+                        jsonChar.put("WriteWithoutResponse", true);
+                    }
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0x0) {
+                        jsonChar.put("Write", true);
+                    }
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0x0) {
+                        jsonChar.put("Notify", true);
+                    }
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0x0) {
+                        jsonChar.put("Indicate", true);
+                    }
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE) != 0x0) {
+                        jsonChar.put("AuthenticateSignedWrites", true);
+                    }
+
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS) != 0x0) {
+                        jsonChar.put("ExtendedProperties", true);
+                    }
+/*
+                    int cpermissions = c.getPermissions();
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_READ) != 0x0) {
+                        jsonChar.put("Read", true);
+                    }
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_WRITE) != 0x0) {
+                        jsonChar.put("Write", true);
+                    }
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_READ_ENCRYPTED) != 0x0) {
+                        jsonChar.put("ReadEncrypted", true);
+                    }
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED) != 0x0) {
+                        jsonChar.put("WriteEncrypted", true);
+                    }
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_READ_ENCRYPTED_MITM) != 0x0) {
+                        jsonChar.put("ReadEncryptedMITM", true);
+                    }
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_WRITE_ENCRYPTED_MITM) != 0x0) {
+                        jsonChar.put("WriteEncryptedMITM", true);
+                    }
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_WRITE_SIGNED) != 0x0) {
+                        jsonChar.put("WriteSigned", true);
+                    }
+
+                    if ((cpermissions & BluetoothGattCharacteristic.PERMISSION_WRITE_SIGNED_MITM) != 0x0) {
+                        jsonChar.put("WriteSignedMITM", true);
+                    }
+*/
+                    List<BluetoothGattDescriptor> descs = c.getDescriptors();
+                    for (BluetoothGattDescriptor d : descs) {
+                        JSONObject jsonDesc = new JSONObject();
+                        jsonDescs.put(jsonDesc);
+
+                        jsonDesc.put("uuid", d.getUuid().toString());
+/*
+                        int dpermission = d.getPermissions();
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_READ) != 0x0) {
+                            jsonDesc.put("Read", true);
+                        }
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_WRITE) != 0x0) {
+                            jsonDesc.put("Write", true);
+                        }
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_READ_ENCRYPTED) != 0x0) {
+                            jsonDesc.put("ReadEncrypted", true);
+                        }
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_WRITE_ENCRYPTED) != 0x0) {
+                            jsonDesc.put("WriteEncrypted", true);
+                        }
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_READ_ENCRYPTED_MITM) != 0x0) {
+                            jsonDesc.put("ReadEncryptedMITM", true);
+                        }
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_WRITE_ENCRYPTED_MITM) != 0x0) {
+                            jsonDesc.put("WriteEncryptedMITM", true);
+                        }
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_WRITE_SIGNED) != 0x0) {
+                            jsonDesc.put("WriteSigned", true);
+                        }
+
+                        if ((dpermission & BluetoothGattDescriptor.PERMISSION_WRITE_SIGNED_MITM) != 0x0) {
+                            jsonDesc.put("WriteSignedMITM", true);
+                        }
+ */
+                    }
+                }
+            }
+
+            return json;
+        } catch (JSONException e) {
+            Log.v("AWTK", e.toString());
+            return null;
+        }
+    }
+
+    public BluetoothGattCharacteristic findCharacteristic(List<BluetoothGattService> services, String uuid) {
+        for (BluetoothGattService s : services) {
+            BluetoothGattCharacteristic c = s.getCharacteristic(UUID.fromString(uuid));
+            if (c != null) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public BluetoothGattDescriptor findDescriptor(List<BluetoothGattService> services, String uuid) {
+        for (BluetoothGattService s : services) {
+            List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
+            for (BluetoothGattCharacteristic c : chars) {
+                BluetoothGattDescriptor d = c.getDescriptor(UUID.fromString(uuid));
+                if (d != null) {
+                    return d;
+                }
+            }
+        }
+
+        return null;
+
+    }
+
+    public JSONObject deviceToJson(BluetoothDevice device, String msgType, int rssi, List<BluetoothGattService> services) {
+        try {
+            String addr = device.getAddress();
+            String name = device.getName();
+            int type = device.getType();
+
+            JSONObject json = new JSONObject()
+                    .put("type", msgType)
+                    .put("rssi", rssi)
+                    .put("name", name)
+                    .put("ble", type == BluetoothDevice.DEVICE_TYPE_LE)
+                    .put("addr", addr);
+
+            if (services != null) {
+                json.put("services", this.serviceToJson(services));
+            }
+
+            return json;
+        } catch (JSONException e) {
+            return null;
+        }
+    }
 
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             BluetoothDevice device = result.getDevice();
-            int rssi = result.getRssi();
-            String addr = device.getAddress();
-            String name = device.getName();
-            int type = device.getType();
-            if (name != null) {
-                if (rssi >= -80 && type == BluetoothDevice.DEVICE_TYPE_LE) {
-                    Log.v("AWTK", "low rssi " + addr);
-                }
 
-                if (findDeviceByAddr(addr) == null) {
-                    mBluetoothDevices.add(device);
+            if (findDeviceByAddr(device.getAddress()) == null) {
+                mBluetoothDevices.add(device);
+
+                String str = deviceToJson(device, "onScanResult", result.getRssi(), null).toString();
+                Log.v("AWTK", str);
+                if (notifyReceiver != null) {
+                    PluginManager.writeResult(notifyReceiver, str);
                 }
-            } else {
-                Log.v("AWTK", "skip " + addr);
             }
+
         }
 
         @Override
@@ -92,6 +287,7 @@ public class BLEPlugin implements Plugin {
                                             int newState) {
             BluetoothDevice device = gatt.getDevice();
             String address = device.getAddress();
+
             Log.d("AWTK", "onConnectionStateChange (" + address + ") " + newState +
                     " status: " + status);
 
@@ -101,6 +297,7 @@ public class BLEPlugin implements Plugin {
                         gatt.discoverServices();
                         break;
                     case BluetoothProfile.STATE_DISCONNECTED:
+                        mBluetoothGatts.remove(gatt);
                         break;
                     default:
                         // Log.e(TAG, "New state not processed: " + newState);
@@ -111,52 +308,28 @@ public class BLEPlugin implements Plugin {
             }
         }
 
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            int i = 0;
-            String str = "{\n";
-            BluetoothDevice device = gatt.getDevice();
+        public void enableNotify(BluetoothGatt gatt) {
             List<BluetoothGattService> services = gatt.getServices();
 
-            str += "\"type\":\"services\",\n";
-            str += String.format("\"address\":\"%s\",\n", device.getAddress());
-            str += "\"services\":[\n";
             for (BluetoothGattService s : services) {
-                if (i > 0) {
-                    str += ",\n";
-                }
-
-                int j = 0;
-                str += "{\n";
-                str += String.format("\"uuid\":\"%s\",\n", s.getUuid().toString());
-                str += "\"characteristics\": [";
                 List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
                 for (BluetoothGattCharacteristic c : chars) {
-                    if (j > 0) {
-                        str += ",\n";
-                    }
-
-                    int k = 0;
-                    str += "{\n";
-                    str += String.format("\"uuid\":\"%s\",\n", c.getUuid().toString());
-                    str += String.format("\"descriptors\":[\n");
-                    List<BluetoothGattDescriptor> descs = c.getDescriptors();
-                    for (BluetoothGattDescriptor d : descs) {
-                        if (k > 0) {
-                            str += ",\n";
-                        }
-                        str += String.format("{\"uuid\":\"%s\"}\n", d.getUuid().toString());
-
-                        k++;
-                    }
-                    str += "]\n}\n";
-                    j++;
+                    gatt.setCharacteristicNotification(c, true);
                 }
-                str += "]\n}\n";
-                i++;
             }
-            str += "\n]\n}\n";
 
+            return;
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            BluetoothDevice device = gatt.getDevice();
+            JSONObject json = deviceToJson(device, "onServicesDiscovered", 0, gatt.getServices());
+            String str = json.toString();
+
+            this.enableNotify(gatt);
+
+            Log.v("AWTK", str);
             if (notifyReceiver != null) {
                 PluginManager.writeResult(notifyReceiver, str);
             }
@@ -165,36 +338,155 @@ public class BLEPlugin implements Plugin {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
+            super.onCharacteristicChanged(gatt, characteristic);
+            Log.i("AWTK", "onCharacteristicChanged: " + characteristic.getUuid().toString());
+            byte[] bytes = characteristic.getValue();
+            String data = new String(bytes, StandardCharsets.UTF_8);
+            String hex = byteArrayToHex(bytes);
+
+            if (notifyReceiver != null) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("type", "onCharacteristicChanged")
+                            .put("address", gatt.getDevice().getAddress())
+                            .put("uuid", characteristic.getUuid().toString())
+                            .put("hex", hex)
+                            .put("data", data);
+                    PluginManager.writeResult(notifyReceiver, json.toString());
+                } catch (JSONException e) {
+                    Log.d("AWTK", e.toString());
+                }
+            }
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicRead(gatt, characteristic, status);
+            Log.i("AWTK", "onDescriptorWrite: " + characteristic.getUuid().toString());
+            byte[] bytes = characteristic.getValue();
+            String data = new String(bytes, StandardCharsets.UTF_8);
+            String hex = byteArrayToHex(bytes);
+
+            if (notifyReceiver != null) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("type", "onCharacteristicRead")
+                            .put("address", gatt.getDevice().getAddress())
+                            .put("uuid", characteristic.getUuid().toString())
+                            .put("status", status)
+                            .put("hex", hex)
+                            .put("data", data);
+                    PluginManager.writeResult(notifyReceiver, json.toString());
+                } catch (JSONException e) {
+                    Log.d("AWTK", e.toString());
+                }
+            }
         }
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt,
                                           BluetoothGattCharacteristic characteristic, int status) {
+            super.onCharacteristicWrite(gatt, characteristic, status);
+            Log.i("AWTK", "onDescriptorWrite: " + characteristic.getUuid().toString());
+            byte[] bytes = characteristic.getValue();
+            String data = new String(bytes, StandardCharsets.UTF_8);
+            String hex = byteArrayToHex(bytes);
+
+            if (notifyReceiver != null) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("type", "onCharacteristicWrite")
+                            .put("address", gatt.getDevice().getAddress())
+                            .put("uuid", characteristic.getUuid().toString())
+                            .put("status", status)
+                            .put("hex", hex)
+                            .put("data", data);
+                    PluginManager.writeResult(notifyReceiver, json.toString());
+                } catch (JSONException e) {
+                    Log.d("AWTK", e.toString());
+                }
+            }
         }
 
         @Override
         public void onDescriptorRead(BluetoothGatt gatt,
                                      BluetoothGattDescriptor descriptor, int status) {
-            Log.i("AWTK", "onDescriptorWrite: " + descriptor.getUuid().toString());
+            super.onDescriptorRead(gatt, descriptor, status);
+
+            Log.i("AWTK", "onDescriptorRead: " + descriptor.getUuid().toString());
+            byte[] bytes = descriptor.getValue();
+            String data = new String(bytes, StandardCharsets.UTF_8);
+            String hex = byteArrayToHex(bytes);
+
+            if (notifyReceiver != null) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("type", "onDescriptorRead")
+                            .put("address", gatt.getDevice().getAddress())
+                            .put("uuid", descriptor.getUuid().toString())
+                            .put("status", status)
+                            .put("hex", hex)
+                            .put("data", data);
+                    PluginManager.writeResult(notifyReceiver, json.toString());
+                } catch (JSONException e) {
+                    Log.d("AWTK", e.toString());
+                }
+            }
         }
 
         @Override
         public void onDescriptorWrite(BluetoothGatt gatt,
                                       BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
             Log.i("AWTK", "onDescriptorWrite: " + descriptor.getUuid().toString());
+            byte[] bytes = descriptor.getValue();
+            String data = new String(bytes, StandardCharsets.UTF_8);
+            String hex = byteArrayToHex(bytes);
+
+            if (notifyReceiver != null) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("type", "onDescriptorWrite")
+                            .put("address", gatt.getDevice().getAddress())
+                            .put("uuid", descriptor.getUuid().toString())
+                            .put("status", status)
+                            .put("hex", hex)
+                            .put("data", data);
+                    PluginManager.writeResult(notifyReceiver, json.toString());
+                } catch (JSONException e) {
+                    Log.d("AWTK", e.toString());
+                }
+            }
         }
     };
+
+    public void getConnectedDevices() {
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) activity.getSystemService(Context.BLUETOOTH_SERVICE);
+        List<BluetoothDevice> connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT);
+
+        BluetoothGatt gatt = null;
+        for (BluetoothDevice d : connectedDevices) {
+            gatt = findConnectionByAddr(d.getAddress());
+            if (gatt == null) {
+                gatt = d.connectGatt(activity, true, mBluetoothGattCallback);
+            }
+
+            JSONObject json = deviceToJson(d, "onDeviceConnected", 0, gatt.getServices());
+            String str = json.toString();
+            if (notifyReceiver != null) {
+                PluginManager.writeResult(notifyReceiver, str);
+            }
+        }
+    }
 
     public void scanDevices(boolean start) {
         if (start) {
             if (mScanning) {
                 return;
             }
+
             mBluetoothDevices.clear();
             mBluetoothLeScanner.startScan(null, createScanSetting(), mScanCallback);
             mScanning = true;
@@ -250,7 +542,6 @@ public class BLEPlugin implements Plugin {
             mStarted = true;
         }
 
-
         return true;
     }
 
@@ -301,14 +592,16 @@ public class BLEPlugin implements Plugin {
     public boolean run(String action, String callerInfo, String args) {
         try {
             this.callerInfo = callerInfo;
+            this.action = action;
+
             JSONObject json = new JSONObject(args);
 
             if (action.equals("start")) {
                 if (this.hasPermissions()) {
                     if (this.startBLE()) {
-                        PluginManager.writeResult(callerInfo, "{\"result\":true}");
+                        PluginManager.writeSuccess(callerInfo, action);
                     } else {
-                        PluginManager.writeResult(callerInfo, "{\"result\":false}");
+                        PluginManager.writeFailure(callerInfo, action, "start ble fail");
                     }
                 } else {
                     ActivityCompat.requestPermissions(this.activity,
@@ -318,27 +611,36 @@ public class BLEPlugin implements Plugin {
             } else if (mStarted) {
                 if (action.equals("start_scan")) {
                     this.scanDevices(true);
-                    PluginManager.writeResult(callerInfo, "{\"result\":true}");
+                    PluginManager.writeSuccess(callerInfo, action);
+                } else if (action.equals("get_connected_devices")) {
+                    this.getConnectedDevices();
+                    PluginManager.writeSuccess(callerInfo, action);
                 } else if (action.equals("register")) {
                     this.notifyReceiver = json.getString("onevent");
-                    PluginManager.writeResult(callerInfo, "{\"result\":true}");
+                    PluginManager.writeSuccess(callerInfo, action);
                 } else if (action.equals("unregister")) {
                     this.notifyReceiver = null;
-                    PluginManager.writeResult(callerInfo, "{\"result\":true}");
+                    PluginManager.writeSuccess(callerInfo, action);
                 } else if (action.equals("connect")) {
                     this.connectDevice(json.getString("address"));
+                } else if (action.equals("write_char")) {
+                    this.writeChar(json);
+                } else if (action.equals("write_desc")) {
+                    this.writeDesc(json);
+                } else if (action.equals("read_char")) {
+                    this.readChar(json);
+                } else if (action.equals("read_desc")) {
+                    this.readDesc(json);
                 } else if (action.equals("disconnect")) {
                     this.disconnectDevice(json.getString("address"));
                 } else if (action.equals("stop_scan")) {
                     this.scanDevices(false);
-                    PluginManager.writeResult(callerInfo, "{\"result\":true}");
-                } else if (action.equals("get_info")) {
-                    this.getInfo();
+                    PluginManager.writeSuccess(callerInfo, action);
                 } else {
-                    PluginManager.writeResult(callerInfo, "{\"result\":false, \"message\":\"not supported action\"}");
+                    PluginManager.writeFailure(callerInfo, action, "not supported action");
                 }
             } else {
-                PluginManager.writeResult(callerInfo, "{\"result\":false, \"message\":\"please call start to start ble first\"}");
+                PluginManager.writeFailure(callerInfo, action, "please call start to start ble first");
             }
         } catch (JSONException e) {
             Log.v("AWTK", e.toString());
@@ -387,25 +689,126 @@ public class BLEPlugin implements Plugin {
         return null;
     }
 
+    void readChar(JSONObject json) {
+        try {
+            String address = json.getString("address");
+            String uuid = json.getString("uuid");
+
+            BluetoothGatt conn = this.findConnectionByAddr(address);
+            if (conn != null) {
+                BluetoothGattCharacteristic c = findCharacteristic(conn.getServices(), uuid);
+                if (c != null) {
+                    conn.readCharacteristic(c);
+                    PluginManager.writeSuccess(this.callerInfo, this.action);
+                } else {
+                    PluginManager.writeFailure(this.callerInfo, this.action, "not found BluetoothGattCharacteristic");
+                }
+            } else {
+                PluginManager.writeFailure(this.callerInfo, this.action, "please connect device first");
+            }
+        } catch (JSONException e) {
+            PluginManager.writeFailure(this.callerInfo, this.action, "bad parameters");
+        }
+    }
+
+    void readDesc(JSONObject json) {
+        try {
+            String address = json.getString("address");
+            String uuid = json.getString("uuid");
+
+            BluetoothGatt conn = this.findConnectionByAddr(address);
+            if (conn != null) {
+                BluetoothGattDescriptor d = findDescriptor(conn.getServices(), uuid);
+                if (d != null) {
+                    conn.readDescriptor(d);
+                    PluginManager.writeSuccess(this.callerInfo, this.action);
+                } else {
+                    PluginManager.writeFailure(this.callerInfo, this.action, "not found BluetoothGattDescriptor");
+                }
+            } else {
+                PluginManager.writeFailure(this.callerInfo, this.action, "please connect device first");
+            }
+        } catch (JSONException e) {
+            PluginManager.writeFailure(this.callerInfo, this.action, "bad parameters");
+        }
+
+    }
+
+    void writeChar(JSONObject json) {
+        try {
+            String address = json.getString("address");
+            String uuid = json.getString("uuid");
+            String data = json.getString("data");
+            String format = json.getString("format");
+            /*TODO: Support HEX*/
+            
+            BluetoothGatt conn = this.findConnectionByAddr(address);
+            if (conn != null) {
+                BluetoothGattCharacteristic c = findCharacteristic(conn.getServices(), uuid);
+                if (c != null) {
+                    conn.setCharacteristicNotification(c, true);
+                    c.setValue(data);
+                    conn.writeCharacteristic(c);
+                    PluginManager.writeSuccess(this.callerInfo, this.action);
+                } else {
+                    PluginManager.writeFailure(this.callerInfo, this.action, "not found BluetoothGattCharacteristic");
+                }
+            } else {
+                PluginManager.writeFailure(this.callerInfo, this.action, "please connect device first");
+            }
+        } catch (JSONException e) {
+            PluginManager.writeFailure(this.callerInfo, this.action, "bad parameters");
+        }
+    }
+
+    void writeDesc(JSONObject json) {
+        try {
+            String address = json.getString("address");
+            String uuid = json.getString("uuid");
+            String data = json.getString("data");
+            String format = json.getString("format");
+            /*TODO: Support HEX*/
+
+            BluetoothGatt conn = this.findConnectionByAddr(address);
+            if (conn != null) {
+                BluetoothGattDescriptor d = findDescriptor(conn.getServices(), uuid);
+                if (d != null) {
+                    d.setValue(data.getBytes());
+                    conn.writeDescriptor(d);
+                    PluginManager.writeSuccess(this.callerInfo, this.action);
+                } else {
+                    PluginManager.writeFailure(this.callerInfo, this.action, "not found BluetoothGattCharacteristic");
+                }
+            } else {
+                PluginManager.writeFailure(this.callerInfo, this.action, "please connect device first");
+            }
+        } catch (JSONException e) {
+            PluginManager.writeFailure(this.callerInfo, this.action, "bad parameters");
+        }
+    }
+
     void connectDevice(String address) {
         BluetoothGatt conn = this.findConnectionByAddr(address);
+        if (mScanning) {
+            scanDevices(false);
+        }
+
         if (conn == null) {
-            //BluetoothDevice device = this.findDeviceByAddr(address);
-            BluetoothDevice device = this.findDeviceByName("mi_mtk");
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
 
             if (device != null) {
                 conn = device.connectGatt(activity, true, mBluetoothGattCallback);
                 if (conn != null) {
                     mBluetoothGatts.add(conn);
-                    PluginManager.writeResult(this.callerInfo, "{\"result\":true, \"message\":\"success\"}");
+                    PluginManager.writeSuccess(this.callerInfo, this.action);
                 } else {
-                    PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"connect failed\"}");
+                    PluginManager.writeFailure(this.callerInfo, this.action, "connect failed");
                 }
             } else {
-                PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"not found\"}");
+                PluginManager.writeFailure(this.callerInfo, this.action, "not found");
             }
         } else {
-            PluginManager.writeResult(this.callerInfo, "{\"result\":true, \"message\":\"connected already\"}");
+            PluginManager.writeFailure(this.callerInfo, this.action, "connected already");
         }
     }
 
@@ -414,31 +817,9 @@ public class BLEPlugin implements Plugin {
         if (conn != null) {
             conn.disconnect();
             mBluetoothGatts.remove(conn);
-            PluginManager.writeResult(this.callerInfo, "{\"result\":true, \"message\":\"success\"}");
+            PluginManager.writeSuccess(this.callerInfo, this.action);
         } else {
-            PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"not found\"}");
+            PluginManager.writeFailure(this.callerInfo, this.action, "not found");
         }
-
-    }
-
-    void getInfo() {
-        int i = 0;
-        String callerInfo = this.callerInfo;
-
-        String str = "[\n";
-        for (BluetoothDevice device : mBluetoothDevices) {
-            if (i > 0) {
-                str += ",\n";
-            }
-            str += "{\n";
-            str += String.format("\"type\":%d,\n", device.getType());
-            str += String.format("\"name\":\"%s\",\n", device.getName() != null ? device.getName() : "");
-            str += String.format("\"address\":\"%s\"\n", device.getAddress());
-            str += "}";
-            i++;
-        }
-        str += "\n]\n";
-
-        PluginManager.writeResult(callerInfo, str);
     }
 }
