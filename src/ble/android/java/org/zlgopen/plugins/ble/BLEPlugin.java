@@ -55,6 +55,16 @@ public class BLEPlugin implements Plugin {
     private BluetoothLeScanner mBluetoothLeScanner;
     private List<BluetoothDevice> mBluetoothDevices;
 
+    public static byte[] hexToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
+    }
+
     public static String byteArrayToHex(byte[] a) {
         StringBuilder sb = new StringBuilder(a.length * 2);
         for (byte b : a)
@@ -314,7 +324,10 @@ public class BLEPlugin implements Plugin {
             for (BluetoothGattService s : services) {
                 List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
                 for (BluetoothGattCharacteristic c : chars) {
-                    gatt.setCharacteristicNotification(c, true);
+                    int properties = c.getProperties();
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0x0) {
+                        gatt.setCharacteristicNotification(c, true);
+                    }
                 }
             }
 
@@ -739,15 +752,18 @@ public class BLEPlugin implements Plugin {
             String address = json.getString("address");
             String uuid = json.getString("uuid");
             String data = json.getString("data");
-            String format = json.getString("format");
-            /*TODO: Support HEX*/
-            
+            String type = json.getString("type");
+
             BluetoothGatt conn = this.findConnectionByAddr(address);
             if (conn != null) {
                 BluetoothGattCharacteristic c = findCharacteristic(conn.getServices(), uuid);
                 if (c != null) {
                     conn.setCharacteristicNotification(c, true);
-                    c.setValue(data);
+                    if (type.equals("hex")) {
+                        c.setValue(hexToByteArray(data));
+                    } else {
+                        c.setValue(data);
+                    }
                     conn.writeCharacteristic(c);
                     PluginManager.writeSuccess(this.callerInfo, this.action);
                 } else {
@@ -766,14 +782,17 @@ public class BLEPlugin implements Plugin {
             String address = json.getString("address");
             String uuid = json.getString("uuid");
             String data = json.getString("data");
-            String format = json.getString("format");
-            /*TODO: Support HEX*/
+            String type = json.getString("type");
 
             BluetoothGatt conn = this.findConnectionByAddr(address);
             if (conn != null) {
                 BluetoothGattDescriptor d = findDescriptor(conn.getServices(), uuid);
                 if (d != null) {
-                    d.setValue(data.getBytes());
+                    if (type.equals("hex")) {
+                        d.setValue(hexToByteArray(data));
+                    } else {
+                        d.setValue(data.getBytes());
+                    }
                     conn.writeDescriptor(d);
                     PluginManager.writeSuccess(this.callerInfo, this.action);
                 } else {
