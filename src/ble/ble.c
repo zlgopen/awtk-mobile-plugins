@@ -252,6 +252,12 @@ ret_t ble_connect_to(ble_t* ble, const char* address, uint32_t mtu) {
   return ble_low_connect(address, mtu, ble_default_on_result, ble);
 }
 
+ret_t ble_disconnect(ble_t* ble, const char* address) {
+  return_value_if_fail(ble != NULL && address != NULL, RET_BAD_PARAMS);
+
+  return ble_low_disconnect(address, ble_default_on_result, ble);
+}
+
 ret_t ble_write_characteristic(ble_t* ble, const char* address, const char* uuid, const char* data,
                                bool_t is_hex) {
   return_value_if_fail(ble != NULL && address != NULL && data != NULL, RET_BAD_PARAMS);

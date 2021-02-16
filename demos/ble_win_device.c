@@ -6,6 +6,12 @@
 
 static ret_t ble_device_on_destroy(void* ctx, event_t* e) {
   ble_device_t* device = (ble_device_t*)ctx;
+
+  /*disconnect pending connection*/
+  if (device->services.size == 0) {
+    ble_disconnect(device->ble, device->id);
+  }
+
   ble_set_on_device_services_discovered(device->ble, NULL, NULL);
 
   return RET_REMOVE;

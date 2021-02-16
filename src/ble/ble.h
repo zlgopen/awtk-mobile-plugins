@@ -114,16 +114,15 @@ ret_t ble_stop_scan(ble_t* ble);
 ret_t ble_get_connected_devices(ble_t* ble);
 
 /**
- * @method ble_connect_to
- * 连接到指定的蓝牙设备。连接成功后会触发on_device_connected回调函数。
- * 但是只有on_device_services_discovered完成后才能收发数据。
+ * @method ble_disconnect
+ * 断开连接。
  *
  * @param {ble_t*} ble ble对象。
- * @param {uint32_t} mtu 最大传输长度(一般取值范围0-128)。
+ * @param {const char*} address 设备的地址。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t ble_request_mtu(ble_t* ble, uint32_t mtu);
+ret_t ble_disconnect(ble_t* ble, const char* address);
 
 /**
  * @method ble_connect_to
