@@ -33,6 +33,7 @@ static ret_t ble_main_on_scan_clicked(void* ctx, event_t* e) {
     widget_set_text_utf8(button, "Scan");
   } else {
     ble_start_scan(ble);
+
     widget_destroy_children(widget_lookup(win, "devices", TRUE));
     widget_set_text_utf8(button, "Stop");
   }

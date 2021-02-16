@@ -513,15 +513,21 @@ public class BLEPlugin implements Plugin {
 
         BluetoothGatt gatt = null;
         for (BluetoothDevice d : connectedDevices) {
+
             gatt = findConnectionByAddr(d.getAddress());
             if (gatt == null) {
                 gatt = d.connectGatt(activity, true, mBluetoothGattCallback);
             }
 
-            JSONObject json = deviceToJson(d, "onDeviceConnected", 0, gatt.getServices());
-            String str = json.toString();
             if (notifyReceiver != null) {
-                PluginManager.writeResult(notifyReceiver, str);
+                JSONObject json = deviceToJson(d, "onDeviceConnected", 0, gatt.getServices());
+                PluginManager.writeResult(notifyReceiver, json.toString());
+
+                List<BluetoothGattService> services = gatt.getServices();
+                if (services.size() > 0) {
+                    json = deviceToJson(d, "onServicesDiscovered", 0, services);
+                    PluginManager.writeResult(notifyReceiver, json.toString());
+                }
             }
         }
     }
@@ -533,6 +539,18 @@ public class BLEPlugin implements Plugin {
             }
 
             mBluetoothDevices.clear();
+
+            final BluetoothManager bluetoothManager =
+                    (BluetoothManager) activity.getSystemService(Context.BLUETOOTH_SERVICE);
+            List<BluetoothDevice> connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT);
+
+            for (BluetoothDevice d : connectedDevices) {
+                if (notifyReceiver != null) {
+                    JSONObject json = deviceToJson(d, "onScanResult", 0, null);
+                    PluginManager.writeResult(notifyReceiver, json.toString());
+                }
+            }
+
             mBluetoothLeScanner.startScan(null, createScanSetting(), mScanCallback);
             mScanning = true;
         } else {

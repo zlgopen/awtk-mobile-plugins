@@ -246,6 +246,10 @@ ret_t ble_stop_scan(ble_t* ble) {
   return ret;
 }
 
+ret_t ble_get_connected_devices(ble_t* ble) {
+  return ble_low_get_connected_devices(ble_default_on_result, ble);
+}
+
 ret_t ble_connect_to(ble_t* ble, const char* address, uint32_t mtu) {
   return_value_if_fail(ble != NULL && address != NULL, RET_BAD_PARAMS);
 
