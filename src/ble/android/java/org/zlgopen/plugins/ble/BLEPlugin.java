@@ -555,6 +555,10 @@ public class BLEPlugin implements Plugin {
 
     @Override
     public void destroy() {
+        if (mScanning) {
+            mBluetoothLeScanner.stopScan(mScanCallback);
+        }
+        this.notifyReceiver = null;
     }
 
     @Override
