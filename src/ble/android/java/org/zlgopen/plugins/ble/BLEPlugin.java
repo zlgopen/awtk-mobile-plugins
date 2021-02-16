@@ -598,13 +598,13 @@ public class BLEPlugin implements Plugin {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.v("AWTK", "onRequestPermissionsResult granted");
             if (this.startBLE()) {
-                PluginManager.writeResult(this.callerInfo, "{\"result\":true, \"message\":\"ble started\"}");
+                PluginManager.writeSuccess(this.callerInfo, this.action);
             } else {
-                PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"ble start failed\"}");
+                PluginManager.writeFailure(this.callerInfo, this.action, "ble start failed");
             }
         } else {
             Log.v("AWTK", "onRequestPermissionsResult deny");
-            PluginManager.writeResult(this.callerInfo, "{\"result\":false, \"message\":\"permission deny\"}");
+            PluginManager.writeFailure(this.callerInfo, this.action, "permission deny");
         }
     }
 
@@ -792,7 +792,6 @@ public class BLEPlugin implements Plugin {
             if (conn != null) {
                 BluetoothGattCharacteristic c = findCharacteristic(conn.getServices(), uuid);
                 if (c != null) {
-                    conn.setCharacteristicNotification(c, true);
                     if (type.equals("hex")) {
                         c.setValue(hexToByteArray(data));
                     } else {
