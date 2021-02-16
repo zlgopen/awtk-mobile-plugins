@@ -44,12 +44,13 @@ public class BLEPlugin implements Plugin {
     private String action;
     private String callerInfo;
     private String notifyReceiver;
-
+    private int mMTU;
     private static final int START_CODE = 1;
 
     private Handler mHandler;
     private boolean mScanning;
     private boolean mStarted;
+    private Handler mTimeHandler;
     private BluetoothAdapter mBluetoothAdapter;
     private List<BluetoothGatt> mBluetoothGatts;
     private BluetoothLeScanner mBluetoothLeScanner;
@@ -318,6 +319,29 @@ public class BLEPlugin implements Plugin {
             }
         }
 
+        public void enableCharacteristicNotify(final BluetoothGatt gatt, BluetoothGattCharacteristic c, boolean enable) {
+            boolean result = gatt.setCharacteristicNotification(c, enable);
+            Log.v("AWTK", "enable notify for " + c.getUuid());
+            if (result) {
+                int properties = c.getProperties();
+                for (final BluetoothGattDescriptor d : c.getDescriptors()) {
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0) {
+                        d.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                    } else if ((properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0) {
+                        d.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                    } else {
+                        Log.v("AWTK", "bad");
+                    }
+
+                    mTimeHandler.postDelayed(new Runnable() {
+                        public void run() {
+                            gatt.writeDescriptor(d);
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
         public void enableNotify(BluetoothGatt gatt) {
             List<BluetoothGattService> services = gatt.getServices();
 
@@ -325,8 +349,8 @@ public class BLEPlugin implements Plugin {
                 List<BluetoothGattCharacteristic> chars = s.getCharacteristics();
                 for (BluetoothGattCharacteristic c : chars) {
                     int properties = c.getProperties();
-                    if ((properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0x0) {
-                        gatt.setCharacteristicNotification(c, true);
+                    if ((properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0x0 || (properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0x0) {
+                        enableCharacteristicNotify(gatt, c, true);
                     }
                 }
             }
@@ -339,13 +363,21 @@ public class BLEPlugin implements Plugin {
             BluetoothDevice device = gatt.getDevice();
             JSONObject json = deviceToJson(device, "onServicesDiscovered", 0, gatt.getServices());
             String str = json.toString();
+            if (mMTU > 0) {
+                gatt.requestMtu(mMTU);
+            }
 
             this.enableNotify(gatt);
-
             Log.v("AWTK", str);
+
             if (notifyReceiver != null) {
                 PluginManager.writeResult(notifyReceiver, str);
             }
+        }
+
+        @Override
+        public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
+            super.onMtuChanged(gatt, mtu, status);
         }
 
         @Override
@@ -536,6 +568,8 @@ public class BLEPlugin implements Plugin {
     private boolean startBLE() {
         if (mHandler == null) {
             mHandler = new Handler();
+            mTimeHandler = new Handler();
+
             if (!activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
                 Log.v("AWTK", "device does not support BLE.");
                 return false;
@@ -635,7 +669,7 @@ public class BLEPlugin implements Plugin {
                     this.notifyReceiver = null;
                     PluginManager.writeSuccess(callerInfo, action);
                 } else if (action.equals("connect")) {
-                    this.connectDevice(json.getString("address"));
+                    this.connectDevice(json.getString("address"), json.getInt("mtu"));
                 } else if (action.equals("write_char")) {
                     this.writeChar(json);
                 } else if (action.equals("write_desc")) {
@@ -806,8 +840,10 @@ public class BLEPlugin implements Plugin {
         }
     }
 
-    void connectDevice(String address) {
+    void connectDevice(String address, int mtu) {
         BluetoothGatt conn = this.findConnectionByAddr(address);
+        mMTU = mtu;
+
         if (mScanning) {
             scanDevices(false);
         }

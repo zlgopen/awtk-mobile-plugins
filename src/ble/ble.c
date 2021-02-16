@@ -77,12 +77,12 @@ ret_t ble_low_stop_scan(platform_request_on_result_t on_result, void* on_result_
   return platform_request_send("ble", "stop_scan", "{}", on_result, on_result_ctx);
 }
 
-ret_t ble_low_connect(const char* address, platform_request_on_result_t on_result,
+ret_t ble_low_connect(const char* address, uint32_t mtu, platform_request_on_result_t on_result,
                       void* on_result_ctx) {
   char args[128];
   return_value_if_fail(on_result != NULL, RET_BAD_PARAMS);
 
-  tk_snprintf(args, sizeof(args) - 1, "{\"address\":\"%s\"}", address);
+  tk_snprintf(args, sizeof(args) - 1, "{\"address\":\"%s\",\"mtu\":%u}", address, mtu);
   return platform_request_send("ble", "connect", args, on_result, on_result_ctx);
 }
 
@@ -246,10 +246,10 @@ ret_t ble_stop_scan(ble_t* ble) {
   return ret;
 }
 
-ret_t ble_connect_to(ble_t* ble, const char* address) {
+ret_t ble_connect_to(ble_t* ble, const char* address, uint32_t mtu) {
   return_value_if_fail(ble != NULL && address != NULL, RET_BAD_PARAMS);
 
-  return ble_low_connect(address, ble_default_on_result, ble);
+  return ble_low_connect(address, mtu, ble_default_on_result, ble);
 }
 
 ret_t ble_write_characteristic(ble_t* ble, const char* address, const char* uuid, const char* data,

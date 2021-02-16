@@ -79,10 +79,10 @@ static ret_t ble_char_on_write_clicked(void* ctx, event_t* e) {
   widget_t* write_data = widget_lookup(win, "write_data", TRUE);
   widget_get_text_utf8(write_data, data, sizeof(data) - 1);
 
-  if(strncmp(data, "hex:", 4) != 0) {
+  if (strncmp(data, "hex:", 4) != 0) {
     ble_write_characteristic(device->ble, device->id, achar->id, data, FALSE);
   } else {
-    ble_write_characteristic(device->ble, device->id, achar->id, data+4, TRUE);
+    ble_write_characteristic(device->ble, device->id, achar->id, data + 4, TRUE);
   }
 
   return RET_OK;

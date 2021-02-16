@@ -45,7 +45,7 @@ static ret_t ble_main_on_scan_clicked(void* ctx, event_t* e) {
 static ret_t ble_main_on_item_clicked(void* ctx, event_t* e) {
   ble_device_t* device = (ble_device_t*)ctx;
 
-  ble_connect_to(device->ble, device->id);
+  ble_connect_to(device->ble, device->id, 64);
   ble_win_device(device);
 
   return RET_OK;
