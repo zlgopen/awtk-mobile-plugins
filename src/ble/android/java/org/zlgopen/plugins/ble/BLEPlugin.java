@@ -309,6 +309,12 @@ public class BLEPlugin implements Plugin {
                         break;
                     case BluetoothProfile.STATE_DISCONNECTED:
                         mBluetoothGatts.remove(gatt);
+                        if (notifyReceiver != null) {
+                            JSONObject json = deviceToJson(device, "onDeviceDisconnected", 0, null);
+                            String str = json.toString();
+
+                            PluginManager.writeResult(notifyReceiver, str);
+                        }
                         break;
                     default:
                         // Log.e(TAG, "New state not processed: " + newState);
@@ -545,6 +551,10 @@ public class BLEPlugin implements Plugin {
             List<BluetoothDevice> connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.GATT);
 
             for (BluetoothDevice d : connectedDevices) {
+                if (findDeviceByAddr(d.getAddress()) == null) {
+                    mBluetoothDevices.add(d);
+                }
+
                 if (notifyReceiver != null) {
                     JSONObject json = deviceToJson(d, "onScanResult", 0, null);
                     PluginManager.writeResult(notifyReceiver, json.toString());
@@ -870,7 +880,10 @@ public class BLEPlugin implements Plugin {
         }
 
         if (conn == null) {
-            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+            BluetoothDevice device = findDeviceByAddr(address);
+            if (device == null) {
+                mBluetoothAdapter.getRemoteDevice(address);
+            }
 
             if (device != null) {
                 conn = device.connectGatt(activity, true, mBluetoothGattCallback);

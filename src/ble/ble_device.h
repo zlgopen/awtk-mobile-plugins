@@ -51,10 +51,16 @@ struct _ble_device_t {
    * @annotation ["readable"]
    * 信号强度。
    */
-
   int32_t rssi;
 
-  /**
+    /**
+   * @property {boo_t} connected
+   * @annotation ["readable"]
+   * 是否连接成功。
+   */
+    bool_t connected;
+
+    /**
    * @property {darray_t} services
    * @annotation ["readable"]
    * 设备提供的服务。

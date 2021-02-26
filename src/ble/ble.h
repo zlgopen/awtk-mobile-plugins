@@ -32,6 +32,8 @@ typedef ret_t (*ble_on_device_found_t)(void* ctx, ble_device_t* device);
 
 typedef ret_t (*ble_on_device_connected_t)(void* ctx, ble_device_t* device);
 
+typedef ret_t (*ble_on_device_disconnected_t)(void* ctx, ble_device_t* device);
+
 typedef ret_t (*ble_on_device_services_discovered_t)(void* ctx, ble_device_t* device);
 
 typedef ret_t (*ble_on_characteristic_changed_t)(void* ctx, const char* address, const char* uuid,
@@ -61,6 +63,8 @@ struct _ble_t {
   void* on_device_found_ctx;
   ble_on_device_connected_t on_device_connected;
   void* on_device_connected_ctx;
+  ble_on_device_disconnected_t on_device_disconnected;
+  void* on_device_disconnected_ctx;
   ble_on_device_services_discovered_t on_device_services_discovered;
   void* on_device_services_discovered_ctx;
   ble_on_characteristic_read_t on_characteristic_read;
@@ -212,6 +216,19 @@ ret_t ble_set_on_device_found(ble_t* ble, ble_on_device_found_t on_device_found,
  */
 ret_t ble_set_on_device_connected(ble_t* ble, ble_on_device_connected_t on_device_connected,
                                   void* ctx);
+
+/**
+ * @method ble_set_on_device_disconnected
+ * 设置 on_device_disconnected 回调函数，该函数在设备连接断开时被调用。
+ *
+ * @param {ble_t*} ble ble对象。
+ * @param {ble_on_device_disconnected_t} on_device_disconnected 回调函数。
+ * @param {void*} ctx 回调函数的上下文。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t ble_set_on_device_disconnected(ble_t* ble, ble_on_device_disconnected_t on_device_disconnected,
+                                     void* ctx);
 
 /**
  * @method ble_set_on_device_services_discovered

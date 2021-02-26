@@ -163,8 +163,18 @@ static ret_t ble_default_on_notify(void* ctx, const char* data) {
   } else if (tk_str_eq(type, "onDeviceConnected")) {
     ble_device_t* device = ble_device_manager_add_device_json(ble->devices, json);
     return_value_if_fail(device != NULL, RET_BAD_PARAMS);
+    device->connected = TRUE;
     if (ble->on_device_connected != NULL) {
       ble->on_device_connected(ble->on_device_connected_ctx, device);
+    }
+  } else if (tk_str_eq(type, "onDeviceDisconnected")) {
+    const char* addr = object_get_prop_str(json, "addr");
+    ble_device_t* device = ble_device_manager_get_device_by_id(ble->devices, addr);
+
+    return_value_if_fail(device != NULL, RET_BAD_PARAMS);
+    device->connected = FALSE;
+    if (ble->on_device_disconnected != NULL) {
+      ble->on_device_disconnected(ble->on_device_disconnected_ctx, device);
     }
   } else if (tk_str_eq(type, "onCharacteristicChanged")) {
     const char* address = object_get_prop_str(json, "address");
@@ -257,8 +267,11 @@ ret_t ble_connect_to(ble_t* ble, const char* address, uint32_t mtu) {
 }
 
 ret_t ble_disconnect(ble_t* ble, const char* address) {
+  ble_device_t* device = ble_device_manager_get_device_by_id(ble->devices, address);
   return_value_if_fail(ble != NULL && address != NULL, RET_BAD_PARAMS);
-
+  if (device != NULL) {
+    device->connected = FALSE;
+  }
   return ble_low_disconnect(address, ble_default_on_result, ble);
 }
 
@@ -300,6 +313,14 @@ ret_t ble_set_on_device_connected(ble_t* ble, ble_on_device_connected_t on_devic
   return_value_if_fail(ble != NULL, RET_BAD_PARAMS);
   ble->on_device_connected = on_device_connected;
   ble->on_device_connected_ctx = ctx;
+  return RET_OK;
+}
+
+ret_t ble_set_on_device_disconnected(ble_t* ble, ble_on_device_disconnected_t on_device_disconnected,
+                                     void* ctx) {
+  return_value_if_fail(ble != NULL, RET_BAD_PARAMS);
+  ble->on_device_disconnected = on_device_disconnected;
+  ble->on_device_disconnected_ctx = ctx;
   return RET_OK;
 }
 

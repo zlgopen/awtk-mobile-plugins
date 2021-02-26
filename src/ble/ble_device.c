@@ -121,8 +121,7 @@ ret_t ble_device_set_services(ble_device_t* adevice, object_t* json) {
   return_value_if_fail(adevice != NULL && json != NULL, RET_BAD_PARAMS);
 
   nr = object_get_prop_int(json, "services.#size", 0);
-  if (nr > 0) {
-    darray_clear(&(adevice->services));
+  if (nr > 0 && adevice->services.size == 0) {
     for (i = 0; i < nr; i++) {
       tk_snprintf(path, sizeof(path), "services.[%u].uuid", i);
       uuid = object_get_prop_str(json, path);
