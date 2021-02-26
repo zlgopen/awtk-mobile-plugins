@@ -886,7 +886,7 @@ public class BLEPlugin implements Plugin {
             }
 
             if (device != null) {
-                conn = device.connectGatt(activity, true, mBluetoothGattCallback);
+                conn = device.connectGatt(activity, true, mBluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
                 if (conn != null) {
                     mBluetoothGatts.add(conn);
                     PluginManager.writeSuccess(this.callerInfo, this.action);
@@ -897,6 +897,7 @@ public class BLEPlugin implements Plugin {
                 PluginManager.writeFailure(this.callerInfo, this.action, "not found");
             }
         } else {
+            conn.discoverServices();
             PluginManager.writeFailure(this.callerInfo, this.action, "connected already");
         }
     }

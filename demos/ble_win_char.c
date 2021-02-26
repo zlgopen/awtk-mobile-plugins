@@ -70,6 +70,8 @@ static ret_t ble_char_on_read_clicked(void* ctx, event_t* e) {
   return RET_OK;
 }
 
+#include "charset/encoding.h"
+
 static ret_t ble_char_on_write_clicked(void* ctx, event_t* e) {
   char data[256];
   ble_char_t* achar = (ble_char_t*)ctx;
@@ -77,9 +79,18 @@ static ret_t ble_char_on_write_clicked(void* ctx, event_t* e) {
   ble_device_t* device = service->device;
   widget_t* win = widget_get_window(WIDGET(e->target));
   widget_t* write_data = widget_lookup(win, "write_data", TRUE);
+
   widget_get_text_utf8(write_data, data, sizeof(data) - 1);
 
-  if (strncmp(data, "hex:", 4) != 0) {
+  if (strncmp(data, "gbk:", 4) == 0) {
+    str_t str;
+    char gbk[100];
+    str_init(&str, 100);
+    encoding_utf8_to_gbk(data, strlen(data), gbk, sizeof(gbk));
+    str_encode_hex(&str, (uint8_t*)gbk, strlen(gbk)+1, NULL);
+    ble_write_characteristic(device->ble, device->id, achar->id, str.str, TRUE);
+    str_reset(&str);
+  } else if (strncmp(data, "hex:", 4) != 0) {
     ble_write_characteristic(device->ble, device->id, achar->id, data, FALSE);
   } else {
     ble_write_characteristic(device->ble, device->id, achar->id, data + 4, TRUE);
