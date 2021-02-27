@@ -307,7 +307,7 @@ public class BLEPlugin implements Plugin {
                     case BluetoothProfile.STATE_CONNECTED:
                         gatt.discoverServices();
                         if (notifyReceiver != null) {
-                            JSONObject json = deviceToJson(device, "onDeviceConnected", 0, NULL);
+                            JSONObject json = deviceToJson(device, "onDeviceConnected", 0, null);
                             String str = json.toString();
                             PluginManager.writeResult(notifyReceiver, str);
                         }
