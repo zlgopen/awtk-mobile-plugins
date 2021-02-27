@@ -306,13 +306,17 @@ public class BLEPlugin implements Plugin {
                 switch (newState) {
                     case BluetoothProfile.STATE_CONNECTED:
                         gatt.discoverServices();
+                        if (notifyReceiver != null) {
+                            JSONObject json = deviceToJson(device, "onDeviceConnected", 0, NULL);
+                            String str = json.toString();
+                            PluginManager.writeResult(notifyReceiver, str);
+                        }
                         break;
                     case BluetoothProfile.STATE_DISCONNECTED:
                         mBluetoothGatts.remove(gatt);
                         if (notifyReceiver != null) {
                             JSONObject json = deviceToJson(device, "onDeviceDisconnected", 0, null);
                             String str = json.toString();
-
                             PluginManager.writeResult(notifyReceiver, str);
                         }
                         break;
