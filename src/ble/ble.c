@@ -157,6 +157,7 @@ static ret_t ble_default_on_notify(void* ctx, const char* data) {
   } else if (tk_str_eq(type, "onServicesDiscovered")) {
     ble_device_t* device = ble_device_manager_add_device_json(ble->devices, json);
     return_value_if_fail(device != NULL, RET_BAD_PARAMS);
+    device->connected = TRUE;
     if (ble->on_device_services_discovered != NULL) {
       ble->on_device_services_discovered(ble->on_device_services_discovered_ctx, device);
     }
