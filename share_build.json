@@ -1,0 +1,15 @@
+{
+  "name":"share_demo",
+  "version":"1.0",
+  "assets" : "res/assets",
+  "includes" : [".", "src"],
+  "android" : {
+    "plugins":["share"],
+    "app_name":"org.zlgopen.sharedemo",
+    "sources":["demos/share.c",  "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  },
+  "ios" : {
+    "app_name":"org.zlgopen.sharedemo",
+    "sources":["demos/share.c","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  }
+}

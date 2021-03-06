@@ -1,0 +1,8 @@
+{
+  "name":"url_view",
+  "version":1.0,
+  "author":"awtk team",
+  "android" : {
+    "class":"UrlViewPlugin"
+  }
+}

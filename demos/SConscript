@@ -12,3 +12,4 @@ env.Program(os.path.join(BIN_DIR, 'demo_image_picker'), ['image_picker.c', 'asse
 env.Program(os.path.join(BIN_DIR, 'demo_wifi'), ['wifi.c', 'assets.c'])
 env.Program(os.path.join(BIN_DIR, 'demo_foobar'), ['foobar.c', 'assets.c'])
 env.Program(os.path.join(BIN_DIR, 'demo_ble'), Glob('ble*.c')+['assets.c'])
+env.Program(os.path.join(BIN_DIR, 'demo_url_view'), ['url_view.c', 'assets.c'])

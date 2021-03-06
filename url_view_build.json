@@ -1,0 +1,15 @@
+{
+  "name":"url_view_demo",
+  "version":"1.0",
+  "assets" : "res/assets",
+  "includes" : [".", "src"],
+  "android" : {
+    "plugins":["url_view"],
+    "app_name":"org.zlgopen.url_viewdemo",
+    "sources":["demos/url_view.c",  "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  },
+  "ios" : {
+    "app_name":"org.zlgopen.url_viewdemo",
+    "sources":["demos/url_view.c","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  }
+}

@@ -99,6 +99,8 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
 
 * [低功耗蓝牙 BLE](src/ble/README.md)
 
+* [使用第三方应用程序打开文件或URL](src/url_view/README.md)
+
 ## 文档
 
 * [系统架构](docs/arch.md)
