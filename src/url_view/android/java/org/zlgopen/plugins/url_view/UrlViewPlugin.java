@@ -58,7 +58,8 @@ public class UrlViewPlugin implements Plugin {
             throw new IllegalArgumentException("Non-empty url expected");
         }
 
-        if (!url.startsWith("file:") && !url.startsWith("mailto") && !url.startsWith("tel:")) {
+        if (!url.startsWith("file:") && !url.startsWith("mailto") && !url.startsWith("tel:") 
+          && !url.contains("://")) {
             url = "file://" + url;
         }
 
