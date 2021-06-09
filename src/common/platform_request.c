@@ -66,11 +66,14 @@ ret_t platform_request_init(void) {
   int socks[2] = {0, 0};
   return_value_if_fail(s_server_fd == 0, RET_BAD_PARAMS);
 
-  if (tk_socketpair(socks) == RET_OK) {
+  if (tk_socketpair(socks) == 0) {
     s_client_fd = socks[0];
     s_server_fd = socks[1];
 
     return RET_OK;
+  } else {
+    perror("socketpair");
+    assert(!"create socket pair failed.");
   }
 
   return RET_FAIL;
