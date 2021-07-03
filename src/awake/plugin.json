@@ -1,0 +1,12 @@
+{
+  "name":"awake",
+  "version":1.0,
+  "author":"awtk team",
+  "desc":"awake",
+  "android" : {
+    "class":"AwakePlugin",
+    "permissions" : [],
+    "activities" : [],
+    "dependencies":[]
+  }
+}
