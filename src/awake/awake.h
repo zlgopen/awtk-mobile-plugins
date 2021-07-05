@@ -44,6 +44,16 @@ BEGIN_C_DECLS
  */
 ret_t awake_keep_screen_on(bool_t value);
 
+/**
+ * @method awake_turn_screen_on
+ * 点亮屏幕。
+ *
+ * @annotation ["static"]
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t awake_turn_screen_on(void);
+
 END_C_DECLS
 
 #endif /*TK_AWAKE_H*/

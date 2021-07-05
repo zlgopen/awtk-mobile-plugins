@@ -22,6 +22,13 @@
 #include "awtk.h"
 #include "awake/awake.h"
 
+static ret_t on_timer(const timer_info_t* info) {
+  awake_turn_screen_on(); 
+
+  log_debug("on_timer: awake_turn_screen_on\n");
+  return RET_REPEAT;
+}
+
 static ret_t on_value_changed(void* ctx, event_t* e) {
   value_change_event_t* evt = value_change_event_cast(e);
   bool_t value = value_bool(&(evt->new_value));
@@ -42,6 +49,9 @@ ret_t application_init() {
   widget_on(ok, EVT_VALUE_CHANGED, on_value_changed, NULL);
 
   widget_layout(win);
+
+  /*turn on screen every 10s*/
+  widget_add_timer(win, on_timer, 10000);
 
   return RET_OK;
 }

@@ -33,10 +33,14 @@ ret_t awake_keep_screen_on(bool_t value) {
   ret_t ret = 0;
 
   if(value) {
-    ret = platform_request_send("awake", "enable", "{}", awake_on_result, NULL);
+    ret = platform_request_send("awake", "keep_screen_on", "{}", awake_on_result, NULL);
   } else {
-    ret = platform_request_send("awake", "disable", "{}", awake_on_result, NULL);
+    ret = platform_request_send("awake", "not_keep_screen_on", "{}", awake_on_result, NULL);
   }
 
   return ret;
+}
+
+ret_t awake_turn_screen_on(void) {
+  return platform_request_send("awake", "turn_screen_on", "{}", awake_on_result, NULL);
 }

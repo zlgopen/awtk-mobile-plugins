@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.view.WindowManager;
+import android.os.Build;
+import android.view.Window;
 
 import android.widget.Toast;
 
@@ -42,12 +44,19 @@ public class AwakePlugin implements Plugin {
     try {
       this.callerInfo = callerInfo;
       JSONObject json = new JSONObject(args);
+      final Window window = this.activity.getWindow();
 
       Log.v("AWTK", "Awake action: " + action);
-      if (action.equals("enable")) {
-        this.activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-      }else if (action.equals("disable")) {
-        this.activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      if (action.equals("keep_screen_on")) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      } else if (action.equals("not_keep_screen_on")) {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      } else if (action.equals("turn_screen_on")) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+          this.activity.setTurnScreenOn(true);
+        } else {
+          window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        } 
       } else {
         Log.v("AWTK", "not supported action");
       }
