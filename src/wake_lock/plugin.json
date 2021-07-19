@@ -1,0 +1,13 @@
+{
+  "name":"wake_lock",
+  "version":1.0,
+  "author":"awtk team",
+  "desc":"wake_lock",
+  "android" : {
+    "class":"WakeLockPlugin",
+    "permissions" : [
+      "<uses-permission android:name=\"android.permission.WAKE_LOCK\" />"],
+    "activities" : [],
+    "dependencies":[]
+  }
+}

@@ -99,7 +99,9 @@ App 引用的插件放到对应平台下的 plugins 键下。如：
 
 * [低功耗蓝牙 BLE](src/ble/README.md)
 
-* [禁止/允许设备进入睡眠](src/awake/README.md)
+* [禁止/允许设备熄灭屏幕](src/awake/README.md)
+
+* [禁止/允许设备进入睡眠](src/wake_lock/README.md)
 
 * [使用第三方应用程序打开文件或URL](src/url_view/README.md)
 

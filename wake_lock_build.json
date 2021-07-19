@@ -1,0 +1,15 @@
+{
+  "name":"wake_lock_demo",
+  "version":"1.0",
+  "assets" : "res/assets",
+  "includes" : [".", "src"],
+  "android" : {
+    "plugins":["wake_lock"],
+    "app_name":"org.zlgopen.wake_lockdemo",
+    "sources":["demos/wake_lock.c",  "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  },
+  "ios" : {
+    "app_name":"org.zlgopen.wake_lockdemo",
+    "sources":["demos/wake_lock.c","demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
+  }
+}

@@ -13,6 +13,7 @@ SOURCES = Glob('common/*.c') + Glob('share/*.c') \
   + Glob('foobar/*.c') \
   + Glob('url_view/*.c') \
   + Glob('battery/*.c') \
+  + Glob('wake_lock/*.c') \
   + Glob('awake/*.c')
 env.Library(os.path.join(LIB_DIR, 'plugins'), SOURCES);
 
