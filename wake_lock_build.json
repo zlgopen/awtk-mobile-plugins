@@ -4,7 +4,7 @@
   "assets" : "res/assets",
   "includes" : [".", "src"],
   "android" : {
-    "plugins":["wake_lock"],
+    "plugins":["wake_lock", "awake"],
     "app_name":"org.zlgopen.wake_lockdemo",
     "sources":["demos/wake_lock.c",  "demos/assets*.c", "res/assets.inc", "res/assets/__assets_default.inc"]
   },

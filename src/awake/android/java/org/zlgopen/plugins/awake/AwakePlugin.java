@@ -54,8 +54,10 @@ public class AwakePlugin implements Plugin {
       } else if (action.equals("turn_screen_on")) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
           this.activity.setTurnScreenOn(true);
+          Log.v("AWTK", "this.activity.setTurnScreenOn(true)");
         } else {
           window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+          Log.v("AWTK", "WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON");
         } 
       } else {
         Log.v("AWTK", "not supported action");

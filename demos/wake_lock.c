@@ -20,7 +20,15 @@
  */
 
 #include "awtk.h"
+#include "awake/awake.h"
 #include "wake_lock/wake_lock.h"
+
+static ret_t on_timer(const timer_info_t* info) {
+  awake_turn_screen_on();
+
+  log_debug("on_timer: wake_lock_turn_screen_on\n");
+  return RET_REPEAT;
+}
 
 static ret_t on_value_changed(void* ctx, event_t* e) {
   value_change_event_t* evt = value_change_event_cast(e);
@@ -41,11 +49,14 @@ ret_t application_init() {
   widget_t* win = window_create(NULL, 0, 0, 0, 0);
   widget_t* ok = check_button_create(win, 0, 0, 0, 0);
 
-  widget_set_text(ok, L"Keep AWake");
+  widget_set_text(ok, L"Keep Wake");
   widget_set_self_layout_params(ok, "center", "middle", "50%", "30");
   widget_on(ok, EVT_VALUE_CHANGED, on_value_changed, NULL);
 
   widget_layout(win);
+
+  /*turn on screen every 300s*/
+  widget_add_timer(win, on_timer, 300 * 1000);
 
   return RET_OK;
 }
