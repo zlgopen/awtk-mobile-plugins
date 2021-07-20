@@ -21,7 +21,6 @@ public class WakeLockPlugin implements Plugin {
   private int id;
   private String callerInfo;
   private Activity activity;
-  private WakeLock wakeLock = null;
 
   @Override
   public void destroy() {
@@ -49,15 +48,12 @@ public class WakeLockPlugin implements Plugin {
       final Window window = this.activity.getWindow();
 
       Log.v("AWTK", "WakeLock action: " + action);
-      if (wakeLock == null) {
-        PluginManager.writeFailure(this.callerInfo, "no permission", "");
-        return true;
-      }
-
       if (action.equals("require")) {
-        wakeLock.acquire();
+        this.activity.startService(new Intent(this.activity, 
+          org.zlgopen.plugins.wake_lock.WakeLockService.class));
       } else if (action.equals("release")) {
-        wakeLock.release();
+        this.activity.stopService(new Intent(this.activity, 
+          org.zlgopen.plugins.wake_lock.WakeLockService.class));
       } else {
         Log.v("AWTK", "not supported action");
       }
@@ -71,10 +67,7 @@ public class WakeLockPlugin implements Plugin {
   }
 
   WakeLockPlugin(Activity activity, int id) {
-    PowerManager powerManager = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-
     this.id = id;
     this.activity = activity;
-    this.wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AWTK Wake Lock");
   }
 }
