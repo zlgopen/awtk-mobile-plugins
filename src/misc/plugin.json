@@ -1,0 +1,8 @@
+{
+  "name":"misc",
+  "version":1.0,
+  "author":"awtk team",
+  "android" : {
+    "class":"MiscPlugin"
+  }
+}

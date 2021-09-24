@@ -198,4 +198,6 @@ ret_t ble_device_test(void) {
   assert(strcmp(desc->id, "333") == 0);
 
   ble_device_destroy(dev);
+
+  return RET_OK;
 }
