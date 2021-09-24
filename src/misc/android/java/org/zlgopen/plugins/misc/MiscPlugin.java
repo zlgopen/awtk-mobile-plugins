@@ -65,7 +65,7 @@ public class MiscPlugin implements Plugin {
     }
 
     void call(String name, String args) {
-      if(name == "notifySystemToScan") {
+      if(name.equals("notifySystemToScan")) {
         this.notifySystemToScan(args);
         PluginManager.writeResult(this.callerInfo, "ok");
       } else {

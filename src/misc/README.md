@@ -39,7 +39,7 @@ notifySystemToScan(filename);
     }
 
     void call(String name, String args) {
-      if(name == "notifySystemToScan") {
+      if(name.equals("notifySystemToScan")) {
         this.notifySystemToScan(filePath);
         PluginManager.writeResult(this.callerInfo, "ok");
       } else {
